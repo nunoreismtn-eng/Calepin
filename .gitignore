@@ -1,0 +1,7 @@
+private.json
+dist/
+site/
+test/shots/
+test/proto/
+node_modules/
+__pycache__/
