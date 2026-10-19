@@ -275,7 +275,7 @@ function viewHoje(){
   return `
   <header class="page-head hoje-head">
     <div class="m-brand only-m">${brandBlock()}</div>
-    ${setBtn()}
+    <div class="head-btns">${installBtn()}${setBtn()}</div>
   </header>
   <section class="hello">
     <h1 class="display" lang="fr">${hr<18?"Bonjour":"Bonsoir"}${name?", "+h(name):""}.</h1>
@@ -334,23 +334,43 @@ function courseMini(){
   <div class="cm">${MODULES.map(M=>{ const ls=LESSONS.filter(L=>L.m===M.id), done=ls.filter(L=>S.prog.lessons[L.id]).length;
     return `<button class="cm-row" data-act="tab" data-tab="licoes"><span class="sw">${stoneSVG(M.stone, 80, 80, M.n)}</span><span class="cm-t"><b lang="fr">${h(M.fr)}</b><small>${h(M.pt)}</small></span><span class="cm-steps" aria-label="${done} de ${ls.length} lições">${ls.map(L=>`<i class="${S.prog.lessons[L.id]?"on":""}"></i>`).join("")}</span></button>`; }).join("")}</div></section>`;
 }
-let installEvt=null;
+let installEvt=null, INSTALLED=false;
 const STANDALONE = (()=>{ try{ return matchMedia("(display-mode: standalone)").matches || navigator.standalone===true; }catch(e){ return false; } })();
 // Install help on the phone: the browser's own prompt when it offers one, otherwise the steps for this browser
 const IS_IOS = /iPhone|iPad|iPod/i.test(navigator.userAgent) || (navigator.platform==="MacIntel" && navigator.maxTouchPoints>1);
 const IN_APP_BROWSER = /; wv\)|FBAN|FBAV|Instagram|Line\/|LinkedInApp|Snapchat|TikTok/i.test(navigator.userAgent);
-function installCard(){
-  if(IN_VIEWER || STANDALONE || !IS_MOBILE || Date.now() < Number(LS.get("install-later",0)||0)) return "";
-  const later=`<button class="btn sm ghost" data-act="install-later">Agora não</button>`;
-  if(installEvt) return `<section class="notice n-info">${ic("download")}<div><b>Instala a app no telemóvel</b><p>Fica com ícone no ecrã principal, abre em ecrã inteiro e funciona sem rede.</p><div class="notice-a"><button class="btn sm primary" data-act="install">Instalar</button>${later}</div></div></section>`;
-  const ua=navigator.userAgent;
-  const steps = IN_APP_BROWSER
+const canInstallHere = () => !IN_VIEWER && !STANDALONE && !INSTALLED && IS_MOBILE;
+function installSteps(){
+  return IN_APP_BROWSER
     ? `Abriste o link dentro de outra app, e aí não dá para instalar. Toca nos <b>⋮</b> e escolhe <b>Abrir no ${IS_IOS?"Safari":"Chrome"}</b>; depois instala a partir daí.`
     : IS_IOS ? `No Safari, toca em <b>Partilhar</b> e depois em <b>Adicionar ao ecrã principal</b>.`
-    : /SamsungBrowser/i.test(ua) ? `Toca no menu <b>≡</b> e escolhe <b>Adicionar página a</b> → <b>Ecrã principal</b>.`
+    : /SamsungBrowser/i.test(navigator.userAgent) ? `Toca no menu <b>≡</b> e escolhe <b>Adicionar página a</b> → <b>Ecrã principal</b>.`
     : `No Chrome, toca nos <b>⋮</b> no canto superior direito e escolhe <b>Instalar app</b> ou <b>Adicionar ao ecrã principal</b>. Se só vires <b>Abrir no Chrome</b>, toca primeiro aí.`;
-  return `<section class="notice n-info">${ic("download")}<div><b>Instala a app no telemóvel</b><p>${steps}</p><div class="notice-a">${later}</div></div></section>`;
 }
+function installCard(){
+  if(!canInstallHere() || Date.now() < Number(LS.get("install-later",0)||0)) return "";
+  const later=`<button class="btn sm ghost" data-act="install-later">Agora não</button>`;
+  if(installEvt) return `<section class="notice n-info">${ic("download")}<div><b>Instala a app no telemóvel</b><p>Fica com ícone no ecrã principal, abre em ecrã inteiro e funciona sem rede.</p><div class="notice-a"><button class="btn sm primary" data-act="install">Instalar</button>${later}</div></div></section>`;
+  return `<section class="notice n-info">${ic("download")}<div><b>Instala a app no telemóvel</b><p>${installSteps()}</p><div class="notice-a">${later}</div></div></section>`;
+}
+// stays in the header even after "Agora não" or a cancelled install
+function installBtn(){ return canInstallHere() ? `<button class="icon-btn" data-act="install-help" aria-label="Instalar a app">${ic("download")}</button>` : ""; }
+function installHelpHtml(){
+  return `<p class="ls-sit">${installSteps()}</p>
+    ${installEvt?`<div class="row-btns" style="margin-top:14px"><button class="btn primary" data-act="install">${ic("download")} Instalar agora</button></div>`:""}
+    <p class="hint">Se carregaste sem querer em <b>Cancelar</b> ou <b>Não instalar</b>, não faz mal: o menu <b>⋮</b> do Chrome continua a ter <b>Instalar app</b>, e este botão fica sempre aqui no topo.</p>
+    <p class="hint">Depois de instalada, abre o Calepin pelo ícone no ecrã principal: fica em ecrã inteiro e funciona sem rede.</p>`;
+}
+function openInstallHelp(){ Sheet.open("Instalar a app", installHelpHtml(), { kind:"install" }); }
+async function promptInstall(){
+  const ev=installEvt; if(!ev){ openInstallHelp(); return; }
+  installEvt=null;
+  try{ await ev.prompt(); const c=ev.userChoice ? await ev.userChoice : null; if(c && c.outcome==="accepted") INSTALLED=true; }catch(e){}
+  if(Sheet.kind==="install") Sheet.set(installHelpHtml());
+  schedule();
+}
+// already installed? (Chrome on Android answers this for the app's own manifest)
+try{ if(navigator.getInstalledRelatedApps && !STANDALONE) navigator.getInstalledRelatedApps().then(list=>{ if(list && list.length){ INSTALLED=true; schedule(); } }).catch(()=>{}); }catch(e){}
 
 /* ---------- Lições ---------- */
 function lessonStatus(L, nx){
@@ -957,6 +977,7 @@ function settingsHtml(){
     <label class="field">O teu nome<input id="s-name" data-field="name" value="${h(s.name)}" autocomplete="given-name"></label>
     <label class="field">A tua empresa<input id="s-company" data-field="company" value="${h(s.company)}" autocomplete="organization"></label>
     <p class="hint">Entram na lição 1, quando te apresentas ao telefone.</p></section>
+  ${canInstallHere()?`<section class="set-sec"><h3>Instalar no telemóvel</h3><p class="hint">${installSteps()}</p>${installEvt?`<div class="row-btns"><button class="btn primary sm" data-act="install">${ic("download")} Instalar agora</button></div>`:""}</section>`:""}
   <section class="set-sec" id="set-voices"><h3>Vozes</h3>${voicesBlock()}</section>
   <section class="set-sec"><h3>Ritmo</h3>
     <p class="set-l">Velocidade do francês</p>${seg("rate",[[0.8,"Calma"],[0.92,"Normal"],[1,"Nativa"]])}
@@ -1127,7 +1148,8 @@ document.addEventListener("click", async e=>{
     case "check": checkPhrase(a.dataset.ref, a); break;
     case "seg": S.seg=a.dataset.v; LS.set("seg", S.seg); S.q=""; render(); break;
     case "clear-q": S.q=""; render(); { const q=$("#q"); if(q) q.focus(); } break;
-    case "install": if(installEvt){ const ev=installEvt; installEvt=null; try{ await ev.prompt(); }catch(err){} schedule(); } break;
+    case "install": promptInstall(); break;
+    case "install-help": if(installEvt) promptInstall(); else openInstallHelp(); break;
     case "install-later": LS.set("install-later", Date.now()+14*DAY); schedule(); break;
     // player
     case "pl-close": P.close(); break;

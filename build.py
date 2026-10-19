@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 """Build Calepin from src/: the Claude artifact page (private defaults) and the public site for GitHub Pages."""
 import json, pathlib, math, hashlib
+from urllib.parse import urlparse
 from PIL import Image, ImageDraw
 
 ROOT = pathlib.Path(__file__).parent
@@ -54,9 +55,11 @@ extra = ('<meta name="robots" content="noindex, nofollow">\n'
          '<link rel="icon" type="image/png" sizes="192x192" href="icon-192.png">\n')
 (SITE / "index.html").write_text(standalone(pub, extra), encoding="utf-8")
 (SITE / "manifest.webmanifest").write_text(json.dumps({
-    "id": "./", "name": "Calepin · Français de la pierre", "short_name": "Calepin", "lang": "pt-PT",
+    # id is resolved against the origin, not the folder: "./" would be the same app as Estúdio Veio
+    "id": urlparse(PAGES_URL).path, "name": "Calepin · Français de la pierre", "short_name": "Calepin", "lang": "pt-PT",
     "description": "Francês profissional para a pedra natural, ao estilo Pimsleur.",
     "start_url": "./", "scope": "./", "display": "standalone", "orientation": "portrait",
+    "related_applications": [{"platform": "webapp", "url": PAGES_URL + "manifest.webmanifest"}],
     "background_color": "#EDEFEE", "theme_color": "#162023",
     "icons": [{"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
               {"src": "icon-512.png", "sizes": "512x512", "type": "image/png"},
@@ -128,7 +131,7 @@ icon(180, radius_frac=0).save(SITE / "apple-touch-icon.png")
 SW = r"""// Calepin: works offline once opened. Page network-first (updates arrive on the next open),
 // own files cache-first, Google Fonts kept for offline use. Touches only its own scope and caches.
 const CACHE = "calepin2-__VERSION__", FONTS = "calepin2-fonts";
-const CORE = ["./", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./apple-touch-icon.png"];
+const CORE = ["./", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./apple-touch-icon.png"];   // not the manifest: it always comes fresh
 const SCOPE = new URL(self.registration.scope).pathname;
 const OWN = new Set(CORE.map(u => new URL(u, self.registration.scope).pathname));
 self.addEventListener("install", e => {
