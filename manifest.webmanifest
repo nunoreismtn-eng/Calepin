@@ -1,5 +1,5 @@
 {
-  "id": "./",
+  "id": "/Calepin/",
   "name": "Calepin · Français de la pierre",
   "short_name": "Calepin",
   "lang": "pt-PT",
@@ -8,6 +8,12 @@
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",
+  "related_applications": [
+    {
+      "platform": "webapp",
+      "url": "https://nunoreismtn-eng.github.io/Calepin/manifest.webmanifest"
+    }
+  ],
   "background_color": "#EDEFEE",
   "theme_color": "#162023",
   "icons": [

@@ -1,7 +1,7 @@
 // Calepin: works offline once opened. Page network-first (updates arrive on the next open),
 // own files cache-first, Google Fonts kept for offline use. Touches only its own scope and caches.
-const CACHE = "calepin2-c49e9bcfde", FONTS = "calepin2-fonts";
-const CORE = ["./", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./apple-touch-icon.png"];
+const CACHE = "calepin2-5030424501", FONTS = "calepin2-fonts";
+const CORE = ["./", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./apple-touch-icon.png"];   // not the manifest: it always comes fresh
 const SCOPE = new URL(self.registration.scope).pathname;
 const OWN = new Set(CORE.map(u => new URL(u, self.registration.scope).pathname));
 self.addEventListener("install", e => {
