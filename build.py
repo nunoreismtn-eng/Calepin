@@ -17,7 +17,7 @@ body_js = "\n".join((SRC / f).read_text(encoding="utf-8") for f in ["content.js"
 shell = (SRC / "shell.html").read_text(encoding="utf-8")
 assert "</style" not in css.lower()
 
-PAGES_URL = "https://nunoreismtn-eng.github.io/estudio-veio/francais/"
+PAGES_URL = "https://nunoreismtn-eng.github.io/Calepin/"
 
 def page(public):
     build = {"public": public, "appUrl": "" if public else PAGES_URL, "defaults": {} if public else PRIVATE}
@@ -63,6 +63,38 @@ extra = ('<meta name="robots" content="noindex, nofollow">\n'
               {"src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}]
 }, ensure_ascii=False, indent=2), encoding="utf-8")
 
+(SITE / ".nojekyll").write_text("", encoding="utf-8")
+(SITE / "README.md").write_text("# Calepin · Le français de la pierre\n\nFrancês profissional para a pedra natural, ao estilo Pimsleur: o professor diz em português o que queres dizer, respondes em francês em voz alta e ouves a versão nativa.\n\n"
+                                "**Abrir:** " + PAGES_URL + "\n\nNo Android, abre no Chrome e escolhe **Instalar app** (menu ⋮). No iPhone, Safari → Partilhar → **Adicionar ao ecrã principal**.\n", encoding="utf-8")
+# the first address (estudio-veio/francais/) now sends people here, and its worker removes itself
+OLD = ROOT / "old-address"; OLD.mkdir(exist_ok=True)
+(OLD / "index.html").write_text(r"""<!doctype html>
+<html lang="pt-PT"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Calepin</title><meta name="robots" content="noindex, nofollow">
+<meta http-equiv="refresh" content="2; url=__URL__"><link rel="canonical" href="__URL__">
+<style>body{margin:0;font:16px/1.5 system-ui,sans-serif;background:#EDEFEE;color:#162023;display:grid;place-items:center;min-height:100vh;padding:24px;box-sizing:border-box;text-align:center}a{color:#1E5550;font-weight:600}@media (prefers-color-scheme:dark){body{background:#0E1315;color:#E5EBEA}a{color:#8FD0C5}}</style>
+<script>
+(function(){
+  var to = "__URL__" + location.search, gone = false;
+  function go(){ if(!gone){ gone = true; location.replace(to); } }
+  try{
+    // only this address's own worker: the Estúdio Veio one, one level up, also matches this page and must stay
+    if(navigator.serviceWorker){ navigator.serviceWorker.getRegistrations().then(function(list){ return Promise.all(list.filter(function(r){ return /\/francais\/$/.test(r.scope); }).map(function(r){ return r.unregister(); })); }).then(go, go); setTimeout(go, 1200); return; }
+  }catch(e){}
+  go();
+})();
+</script></head>
+<body><p>O Calepin mudou de endereço.<br><a href="__URL__">Abrir o Calepin</a></p></body></html>
+""".replace("__URL__", PAGES_URL), encoding="utf-8")
+(OLD / "sw.js").write_text("""// Calepin moved to __URL__ . This worker takes over the old address only to remove itself.
+self.addEventListener("install", () => self.skipWaiting());
+self.addEventListener("activate", e => {
+  e.waitUntil(self.registration.unregister()
+    .then(() => self.clients.matchAll({ type: "window" }))
+    .then(list => Promise.all(list.map(c => c.navigate("__URL__").catch(() => {})))));
+});
+""".replace("__URL__", PAGES_URL), encoding="utf-8")
+
 # icons: the mark (guillemets as the arrows of a dimension line) on slate
 def stroke(d, pts, w, fill):
     r = w/2
@@ -91,10 +123,11 @@ icon(512, maskable=True).save(SITE / "icon-maskable-512.png")
 icon(180, radius_frac=0).save(SITE / "apple-touch-icon.png")
 
 # service worker: opens offline once visited; page network-first so updates arrive on the next open.
-# It shares the origin with Estúdio Veio, so it only touches its own pages and its own caches.
+# It shares the origin with Estúdio Veio, so it only touches its own pages and its own caches ("calepin2-": the first
+# address, estudio-veio/francais/, used "calepin-", and the worker left there may still delete those).
 SW = r"""// Calepin: works offline once opened. Page network-first (updates arrive on the next open),
 // own files cache-first, Google Fonts kept for offline use. Touches only its own scope and caches.
-const CACHE = "calepin-__VERSION__", FONTS = "calepin-fonts";
+const CACHE = "calepin2-__VERSION__", FONTS = "calepin2-fonts";
 const CORE = ["./", "./manifest.webmanifest", "./icon-192.png", "./icon-512.png", "./icon-maskable-512.png", "./apple-touch-icon.png"];
 const SCOPE = new URL(self.registration.scope).pathname;
 const OWN = new Set(CORE.map(u => new URL(u, self.registration.scope).pathname));
@@ -102,7 +135,8 @@ self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE.map(u => new Request(u, { cache: "reload" })))).then(() => self.skipWaiting()));
 });
 self.addEventListener("activate", e => {
-  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => k.startsWith("calepin-") && k !== CACHE && k !== FONTS).map(k => caches.delete(k)))).then(() => self.clients.claim()));
+  // own old versions, plus the caches left by the first address (estudio-veio/francais/)
+  e.waitUntil(caches.keys().then(keys => Promise.all(keys.filter(k => (k.startsWith("calepin2-") && k !== CACHE && k !== FONTS) || k.startsWith("calepin-")).map(k => caches.delete(k)))).then(() => self.clients.claim()));
 });
 function page(req) {
   return new Promise(resolve => {

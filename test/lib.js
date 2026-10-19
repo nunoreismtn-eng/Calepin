@@ -3,7 +3,7 @@
 const http = require('http'), fs = require('fs'), path = require('path');
 const SITE = path.join(__dirname, '..', 'site');
 const FONTS = '/home/claude/fonttest/node_modules/@fontsource/';
-const BASE = '/estudio-veio/francais/';
+const BASE = '/Calepin/';
 
 function serve(port) {
   const types = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.json': 'application/json', '.webmanifest': 'application/manifest+json', '.png': 'image/png' };
