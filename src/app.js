@@ -930,11 +930,14 @@ function roDraw(set){
   return mix(pool.filter(it=>S.prog.srs[it.id]).concat(pool.filter(it=>!S.prog.srs[it.id])).slice(0, RO_N));
 }
 function roastSection(){
-  return `<section class="mod roast"><div class="mod-banner dark">${stoneSVG("nero", 760, 150, 9)}<div class="mb-txt"><span class="mb-num">Bonus · Madame Colette</span><span class="mb-fr" lang="fr">Sans pitié</span><span class="mb-pt">Ela pergunta, tu respondes ao microfone, e cada erro leva um insulto.</span></div></div>
+  return `<section class="mod roast"><div class="mod-banner dark">${stoneSVG("nero", 760, 150, 9)}<div class="mb-txt"><span class="mb-num">Bonus · Madame Colette · +18</span><span class="mb-fr" lang="fr">Sans pitié</span><span class="mb-pt">Ela pergunta, tu respondes ao microfone, e cada erro leva um insulto. Meio em francês, meio em português, sem filtro nenhum.</span></div></div>
     <div class="lrows">${roSets().map(x=>{ const b=roBest(x.id); return `<button class="lrow" data-act="roast" data-id="${x.id}"><span class="lnum">${x.num}</span><span class="ltxt"><b lang="fr">${h(x.fr)}</b><small>${h(x.pt)}</small></span>${b!=null?`<span class="lstat ${b>=14?"done":b>=10?"next":"redo"}">${b}/20</span>`:"<span></span>"}${ic("chevR","chev")}</button>`; }).join("")}</div></section>`;
 }
+// her lines mix both languages: [Portuguese] in brackets, the rest French
+function roMix(t){ return String(t).split(/\[([^\]]*)\]/).map((p,k)=> k%2 ? `<span class="ro-pt" lang="pt-PT">${h(p)}</span>` : h(frTypo(p))).join(""); }
+const roSpeech = t => String(t).replace(/[\[\]]/g,"");
 function coletteSays(line, cls){
-  return `<figure class="ro-say${cls?" "+cls:""}"><span class="ro-av" aria-hidden="true"><i>${stoneSVG("nero", 80, 80, 3)}</i><b>C</b></span><div class="ro-bubble"><blockquote lang="fr">${frHtml(line[0])}</blockquote><figcaption>${ptHtml(line[1])}</figcaption></div></figure>`;
+  return `<figure class="ro-say${cls?" "+cls:""}"><span class="ro-av" aria-hidden="true"><i>${stoneSVG("nero", 80, 80, 3)}</i><b>C</b></span><div class="ro-bubble"><blockquote lang="fr">${roMix(line[0])}</blockquote><figcaption>${ptHtml(line[1])}</figcaption></div></figure>`;
 }
 // one line of words, the wrong ones wrapped in a tag; French spacing before ? ! : ;
 function roLine(toks, tag){ return toks.map((x,k)=>(k ? (/^[?!:;»]/.test(x.w) ? " " : " ") : "") + (x.bad ? `<${tag}>${h(frTypo(x.w))}</${tag}>` : h(frTypo(x.w)))).join(""); }
@@ -971,7 +974,7 @@ const Roast = {
   },
   async say(text, g){
     const mark=on=>{ const el=$(".ro-say"); if(el) el.classList.toggle("talk", on); };
-    mark(true); const r=await sayFr(text, "A", false, ()=>g===this.gen); if(g===this.gen) mark(false);
+    mark(true); const r=await sayFr(roSpeech(text), "A", false, ()=>g===this.gen); if(g===this.gen) mark(false);   // the Portuguese bits too, with her French accent
     return r;
   },
   async intro(){
@@ -1047,7 +1050,7 @@ const Roast = {
     this.stop(); this.flushTime(); Wake.drop("roast"); this.stage="done";
     const { raw, note }=roastNote(this.att.map(a=>a.length ? a[0].s : 0));
     const atFirst=this.att.filter(a=>a.length && a[0].s>=0.8).length;
-    const insults=this.att.reduce((n,a)=>n+a.filter(x=>!["perfect","good","better"].includes(x.kind)).length, 0);
+    const insults=this.att.reduce((n,a)=>n+a.length, 0);   // even her compliments are insults
     const best=roBest(this.set);
     addHistory({ d:Date.now(), k:"roast", set:this.set, n:this.items.length, note, sec:Math.round(this.timeNow()/1000) }); saveProg();
     const b=COLETTE.verdict.find(x=>raw<x[0]) || COLETTE.verdict[COLETTE.verdict.length-1];

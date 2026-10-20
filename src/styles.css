@@ -555,6 +555,7 @@ body.typing .tabbar{ display:none; }
 .ro-bubble blockquote{ margin:0; font:italic 400 19.5px/1.32 var(--f-fr); text-wrap:pretty; }
 .ro-bubble figcaption{ margin-top:6px; font:500 13px/1.45 var(--f-ui); color:#A6AFB2; text-wrap:pretty; }
 .ro-bubble .q-fr{ color:#9FD5CB; }
+.ro-bubble .ro-pt{ font:650 .84em/1.3 var(--f-ui); font-style:normal; letter-spacing:-.005em; color:#F4A28B; }
 .ro-say.mini{ margin:0 auto 18px; }
 .ro-say.mini blockquote{ font-size:17px; }
 /* what you said against what was expected */
