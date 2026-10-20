@@ -18,7 +18,6 @@ const h = escHtml;
 const pad2 = n => String(n).padStart(2,"0");
 const LESSON_BY_ID = {}; LESSONS.forEach(L=>{ LESSON_BY_ID[L.id]=L; });
 const MOD_BY_ID = {}; MODULES.forEach(M=>{ MOD_BY_ID[M.id]=M; });
-const BONUS_BY_ID = {}; BONUS.forEach(B=>{ BONUS_BY_ID[B.id]=B; });
 const WHO = { A:"Elle", N:"Vous", C:"Lui" };
 const N_ITEMS = Object.keys(ITEM_BY_ID).length, N_TERMS = GLOSSARY.reduce((a,g)=>a+g.items.length,0);
 const fold = t => String(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’']/g," ");
@@ -192,7 +191,6 @@ function refText(ref){
   if(p[0]==="i"){ const it=ITEM_BY_ID[p[1]+":"+p[2]]; return it ? { text:it.fr, who:"N" } : null; }
   if(p[0]==="g"){ const g=GLOSSARY[+p[1]], t=g && g.items[+p[2]]; return t ? { text:t[0], who:"A" } : null; }
   if(p[0]==="d"){ const L=LESSON_BY_ID[p[1]], d=L && L.dialogue[+p[2]]; return d ? { text:d[1], who:d[0] } : null; }
-  if(p[0]==="b"){ const B=BONUS_BY_ID[p[1]], t=B && B.items[+p[2]]; return t ? { text:t[1], who:t[3]||"C" } : null; }
   return null;
 }
 const Tap = {
@@ -391,27 +389,7 @@ function viewLicoes(){
     return `<section class="mod"><div class="mod-banner ${M.stone==="granit"?"dark":""}">${stoneSVG(M.stone, 760, 150, M.n*7)}<div class="mb-txt"><span class="mb-num">Module ${M.n}</span><span class="mb-fr" lang="fr">${h(M.fr)}</span><span class="mb-pt">${h(M.pt)} · ${h(M.blurb)}</span></div></div>
       <div class="lrows">${ls.map(L=>{ const [lab,cls]=lessonStatus(L,nx); return `<button class="lrow" data-act="lesson" data-id="${L.id}"><span class="lnum">${pad2(L.n)}</span><span class="ltxt"><b lang="fr">${frHtml(L.fr)}</b><small>${h(L.pt)}</small></span>${lab?`<span class="lstat ${cls}">${cls==="done"?ic("check"):""}${h(lab)}</span>`:"<span></span>"}${ic("chevR","chev")}</button>`; }).join("")}</div></section>`;
   }).join("")}
-  ${bonusSection()}`;
-}
-
-/* ---------- Bonus · Sans filtre (for laughs: the polite phrase, then what a grumpy Frenchman really says) ---------- */
-const bonusRuns = id => S.prog.history.filter(e=>e.k==="bonus" && e.id===id).length;
-function bonusScript(B){ return buildBonus(B, { pause:S.settings.pause, rate:S.settings.rate, narrator:narratorVoiceOn(), seed:today() }); }
-function bonusSection(){
-  return `<section class="mod bonus"><div class="mod-banner dark">${stoneSVG("nero", 760, 150, 9)}<div class="mb-txt"><span class="mb-num">Bonus</span><span class="mb-fr" lang="fr">Sans filtre</span><span class="mb-pt">O francês sem papas na língua · para rir, não para usar com clientes</span></div></div>
-    <div class="lrows">${BONUS.map(B=>{ const n=bonusRuns(B.id); return `<button class="lrow" data-act="bonus" data-id="${B.id}"><span class="lnum">R${B.n}</span><span class="ltxt"><b lang="fr">${frHtml(B.fr)}</b><small>${h(B.pt)} · ${B.items.length} frases</small></span>${n?`<span class="lstat done">${ic("check")}Feita${n>1?` ${n}×`:""}</span>`:"<span></span>"}${ic("chevR","chev")}</button>`; }).join("")}</div></section>`;
-}
-function openBonus(id){
-  const B=BONUS_BY_ID[id]; if(!B) return;
-  const sc=bonusScript(B), n=bonusRuns(B.id);
-  Sheet.open(`Sans filtre · ronde ${B.n}`, `
-    <div class="ls-head dark">${stoneSVG(B.stone, 640, 140, B.n+60)}<div class="ls-ht"><span class="mb-num">Bonus · <span lang="fr">Sans filtre</span></span><h3 class="fr-title" lang="fr">${frHtml(B.fr)}</h3><span class="mb-pt">${h(B.pt)}</span></div></div>
-    <p class="ls-sit">${ptHtml(B.intro)}</p>
-    ${cote(`${Math.max(1,Math.round(sc.total/60))} min · ${sc.spoken} respostas em voz alta`)}
-    <div class="ls-actions"><button class="btn primary" data-act="play-bonus" data-id="${B.id}">${ic("play","fill")} ${n?"Fazer outra vez":"Começar a ronda"}</button></div>
-    <details class="grp bn-list"><summary><span class="ltxt"><b lang="fr">Les phrases</b><small>${B.items.length} frases · espreitar antes estraga a piada</small></span>${ic("chevR","chev")}</summary>
-      <div class="flist">${B.items.map(([pol,rude,lit],k)=>`<div class="frow" data-row><div class="ftx"><p class="fr" lang="fr">${frHtml(rude)}</p><p class="pt">${h(lit)}</p><p class="bn-pol">Em vez de: ${h(pol)}</p></div><div class="pbtns"><button class="pbtn" data-act="say" data-ref="b:${B.id}:${k}" aria-label="Ouvir">${ic("volume")}</button></div></div>`).join("")}</div>
-    </details>`, { kind:"bonus" });
+  ${roastSection()}`;
 }
 function phraseRow(it){
   const sr=S.prog.srs[it.id], ref="i:"+it.id;
@@ -524,7 +502,7 @@ function historyList(){
     if(e.k==="dialogue" && L) return `Diálogo da lição ${pad2(L.n)}`;
     if(e.k==="review") return `Revisão · ${e.n} ${e.n===1?"frase":"frases"}${e.ok!=null?`, ${e.ok} sabidas`:""}`;
     if(e.k==="practice") return `Treino livre · ${e.n} frases`;
-    if(e.k==="bonus" && BONUS_BY_ID[e.id]) return `<span lang="fr">Sans filtre</span> · ronda ${BONUS_BY_ID[e.id].n}`;
+    if(e.k==="roast"){ const x=roSet(e.set); return `<span lang="fr">Madame Colette</span>${x?` · <span lang="fr">${h(x.fr)}</span>`:""} · ${e.note}/20`; }
     return "Prática"; };
   return `<section class="card"><div class="sec-head"><h2 class="sec-title">Histórico</h2></div><ul class="hist">${list.map(e=>`<li><span class="h-d">${h(relDayShort(dayKey(e.d)))}</span><span class="h-t">${label(e)}</span><span class="h-m">${h(fmtDur(e.sec||0))}</span></li>`).join("")}</ul></section>`;
 }
@@ -563,13 +541,13 @@ const P = {
     if(R.open) R.close(true);
     if(Sheet.isOpen) Sheet.close(true);
     Tap.stop(); Voice.stop();
-    this.mode=o.bonus?"bonus":o.dialogue?"dialogue":"lesson"; this.L=L; this.finished=false; this.fails=0;
-    const res=this.mode==="lesson" && !o.restart && S.prog.resume && S.prog.resume.id===L.id ? S.prog.resume : null;
+    this.mode=o.dialogue?"dialogue":"lesson"; this.L=L; this.finished=false; this.fails=0;
+    const res=!o.dialogue && !o.restart && S.prog.resume && S.prog.resume.id===L.id ? S.prog.resume : null;
     if(o.restart && S.prog.resume && S.prog.resume.id===L.id){ S.prog.resume=null; saveProg(); }
     this.seed=(res && res.seed) || today();
-    const prev = this.mode!=="lesson" ? [] : (res && Array.isArray(res.prev) ? res.prev.map(id=>ITEM_BY_ID[id]).filter(Boolean) : prevForLesson(L, S.prog.srs, today(), this.seed));
+    const prev = o.dialogue ? [] : (res && Array.isArray(res.prev) ? res.prev.map(id=>ITEM_BY_ID[id]).filter(Boolean) : prevForLesson(L, S.prog.srs, today(), this.seed));
     this.prevIds=prev.map(p=>p.id);
-    this.sc = this.mode==="bonus" ? buildBonus(L, this.ctx(L,[])) : o.dialogue ? buildDialogue(L, this.ctx(L,[])) : buildLesson(L, this.ctx(L, prev));
+    this.sc = o.dialogue ? buildDialogue(L, this.ctx(L,[])) : buildLesson(L, this.ctx(L, prev));
     this.i = res ? clamp(res.i|0, 0, this.sc.steps.length-1) : 0;
     this.curU=null; this.lastFr=null; this.card=null; this.active=0; this.flushed=0; this.pausedAt=0; this.playing=false;
     Ov.show("player", this.html());
@@ -578,24 +556,24 @@ const P = {
     this.play();
   },
   rebuild(){
-    if(!this.sc || this.mode!=="lesson") { if(this.sc && this.mode==="dialogue") this.sc=buildDialogue(this.L, this.ctx(this.L,[])); if(this.sc && this.mode==="bonus") this.sc=buildBonus(this.L, this.ctx(this.L,[])); this.paintProgress(); return; }
+    if(!this.sc || this.mode!=="lesson") { if(this.sc && this.mode==="dialogue") this.sc=buildDialogue(this.L, this.ctx(this.L,[])); this.paintProgress(); return; }
     const prev=this.prevIds.map(id=>ITEM_BY_ID[id]).filter(Boolean);
     this.sc=buildLesson(this.L, this.ctx(this.L, prev));
     this.paintProgress();
   },
   html(){
-    const L=this.L, bonus=this.mode==="bonus", stone=bonus ? L.stone : MOD_BY_ID[L.m].stone, lesson=this.mode==="lesson";
-    return `<div class="pl${bonus?" pl-bonus":""}" role="dialog" aria-modal="true" aria-label="${bonus?`Sans filtre, ronda ${L.n}`:`Lição ${L.n}`}">
+    const L=this.L, M=MOD_BY_ID[L.m], lesson=this.mode==="lesson";
+    return `<div class="pl" role="dialog" aria-modal="true" aria-label="Lição ${L.n}">
       <header class="pl-top">
         <button class="icon-btn" data-act="pl-close" aria-label="Fechar">${ic("x")}</button>
-        <div class="pl-title"><span>${bonus?`Sans filtre · ronde ${L.n}`:lesson?`Leçon ${pad2(L.n)}`:`Dialogue · leçon ${pad2(L.n)}`}</span><b lang="fr">${frHtml(L.fr)}</b></div>
+        <div class="pl-title"><span>${lesson?`Leçon ${pad2(L.n)}`:`Dialogue · leçon ${pad2(L.n)}`}</span><b lang="fr">${frHtml(L.fr)}</b></div>
         <button class="icon-btn" data-act="pl-pop" aria-label="Ritmo e texto" aria-expanded="false">${ic("sliders")}</button>
       </header>
       <div class="pl-pop" id="pl-pop" hidden>${this.popHtml()}</div>
       <div class="pl-prog"><div class="pl-track"><i id="pl-fill"></i></div><span id="pl-left"></span></div>
       ${lesson?`<ol class="pl-phases" id="pl-phases">${this.sc.phases.map(p=>{ const x=PHASES.find(y=>y.id===p); return `<li data-p="${p}"><span lang="fr">${x.fr}</span></li>`; }).join("")}</ol>`:""}
       <div class="pl-stage" id="pl-stage">
-        ${dialHtml(stone, L.n)}
+        ${dialHtml(M.stone, L.n)}
         <p class="pl-cue" id="pl-cue" aria-live="polite"></p>
         <div class="pl-card" id="pl-card"></div>
         <p class="pl-warn" id="pl-warn" hidden></p>
@@ -733,7 +711,7 @@ const P = {
       srsAddLesson(S.prog.srs, L, t);
       if(S.prog.resume && S.prog.resume.id===L.id) S.prog.resume=null;
     }
-    addHistory({ d:Date.now(), k:this.mode, id:L.id, sec:Math.round(this.active/1000) });
+    addHistory({ d:Date.now(), k:this.mode==="lesson"?"lesson":"dialogue", id:L.id, sec:Math.round(this.active/1000) });
     saveProg(); buzz(30);
     this.paintDone();
   },
@@ -799,8 +777,6 @@ const P = {
     else if(c.kind==="line"){
       html=`<div class="pc-dlg" id="pc-dlg">${L.dialogue.slice(0,c.j+1).map((d,k)=>`<div class="dl${k===c.j?" on":""}">${whoChip(d[0])}<div class="dl-t"><p class="fr" lang="fr">${sf?frHtml(d[1]):`<span class="audio-only">${ic("ear")} só áudio</span>`}</p>${S.settings.showPt?`<p class="pt">${ptHtml(d[2])}</p>`:""}</div></div>`).join("")}</div>`;
     }
-    else if(c.kind==="btitle") html=`<p class="pc-label">Bonus · <span lang="fr">Sans filtre</span></p><h2 class="pc-title" lang="fr">${frHtml(L.fr)}</h2><p class="pc-sub">${h(L.pt)}</p>`;
-    else if(c.kind==="joke") html=`<p class="pc-label">${h(c.label)}</p><p class="pc-pt">${ptHtml(c.pt)}</p>${frLine(c.fr, this.revealed)}${this.revealed?`<p class="pc-lit">“${h(c.lit)}”</p>`:""}`;
     else if(c.kind==="role") html=`<div class="pc-cue">${whoChip(c.who)}<p lang="fr">${sf?frHtml(c.cue):`<span class="audio-only">${ic("ear")} só áudio</span>`}</p></div><p class="pc-label">Responde</p><p class="pc-pt">${ptHtml(c.task)}</p>${frLine(c.fr, this.revealed)}`;
     else html=`<p class="pc-label">${h(c.label)}</p><p class="pc-pt">${ptHtml(c.pt)}</p>${frLine(this.part||c.fr, this.revealed||!!this.part)}`;
     el.innerHTML=html; el.dataset.kind=c.kind;
@@ -811,14 +787,6 @@ const P = {
     $("#pl-fill").style.width="100%"; $("#pl-left").textContent="";
     $$("#pl-phases li").forEach(li=>{ li.classList.remove("on"); li.classList.add("past"); });
     const mins=Math.max(1, Math.round(this.active/60000));
-    if(this.mode==="bonus"){
-      const nx=BONUS.find(B=>B.n===L.n+1);
-      stage.innerHTML=`<div class="pl-done"><div class="medal">${stoneSVG(L.stone, 160, 160, L.n)}<span>${ic("check")}</span></div><p class="eyebrow" lang="fr">Sans filtre · ronde ${L.n}</p><h2 class="fr-title" lang="fr">${frHtml(L.fr)}</h2>
-        <ul class="facts center"><li><b>${mins}</b><span>${mins===1?"minuto":"minutos"}</span></li><li><b>${L.items.length}</b><span>frases sem filtro</span></li><li><b>${this.sc.spoken}</b><span>respostas em voz alta</span></li></ul>
-        <p class="muted">${ptHtml("Já sabes o que eles dizem quando estão mal-dispostos. Com clientes, continua no «vous» e no sorriso.")}</p></div>`;
-      ctl.innerHTML=`<div class="done-actions"><button class="btn ghost" data-act="pl-close">Fechar</button>${nx?`<button class="btn primary" data-act="play-bonus" data-id="${nx.id}">Ronda ${nx.n} ${ic("chevR")}</button>`:`<button class="btn primary" data-act="play-bonus" data-id="${L.id}">${ic("repeat")} Outra vez</button>`}</div>`;
-      return;
-    }
     if(this.mode==="dialogue"){
       stage.innerHTML=`<div class="pl-done"><div class="medal">${stoneSVG(M.stone, 160, 160, L.n)}<span>${ic("check")}</span></div><p class="eyebrow" lang="fr">Dialogue écouté</p><h2 class="fr-title" lang="fr">${frHtml(L.fr)}</h2><p class="muted">Ouve-o mais vezes até perceberes tudo sem ler.</p></div>`;
       ctl.innerHTML=`<div class="done-actions"><button class="btn ghost" data-act="pl-close">Fechar</button><button class="btn primary" data-act="play-dialogue" data-id="${L.id}">${ic("repeat")} Ouvir outra vez</button></div>`;
@@ -945,6 +913,203 @@ const R = {
     else if(this.stage==="listen") ctl=`<div class="pl-sub"><span class="listening big">${ic("mic")} A ouvir… diz a frase em francês.</span></div>`;
     else ctl=`<div class="pl-sub">${MIC_OK?`<button class="chip-btn hot" data-act="rv-mic">${ic("mic")} Responder ao microfone</button>`:""}<button class="chip-btn" data-act="rv-show">Mostrar a resposta</button></div>`;
     $("#pl-ctl").innerHTML=ctl;
+  }
+};
+
+/* ---------- Bonus · Sans pitié: Madame Colette asks, you answer at the microphone, every mistake gets a remark ---------- */
+Object.assign(DIAL, { cask:["Question","Ouve a pergunta"], cjudge:["Colette","A julgar-te"], cnext:["Alors ?","Outra vez ou seguinte"] });
+const RO_N = 10, RO_NUM = ["I","II","III","IV"];
+const roSets = () => MODULES.map(M=>({ id:M.id, num:RO_NUM[M.n-1]||String(M.n), fr:M.fr, pt:M.pt })).concat([{ id:"all", num:"I–IV", fr:"Tout mélangé", pt:"Os quatro módulos" }]);
+const roSet = id => roSets().find(x=>x.id===id) || null;
+function roBest(id){ let b=null; S.prog.history.forEach(e=>{ if(e.k==="roast" && e.set===id && (b==null || e.note>b)) b=e.note; }); return b; }
+// whole sentences from the course (no name placeholders), phrases you have already met first
+function roPool(set){ return Object.values(ITEM_BY_ID).filter(it=>(set==="all" || (LESSON_BY_ID[it.lesson]||{}).m===set) && !/[{}]/.test(it.fr) && /[.?!]\s*$/.test(it.fr) && normFr(it.fr).split(" ").length>=2); }
+function roDraw(set){
+  const r=seeded((Date.now() ^ hashStr(set)) & 0xffffff), mix=a=>{ for(let i=a.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+  const pool=mix(roPool(set));
+  return mix(pool.filter(it=>S.prog.srs[it.id]).concat(pool.filter(it=>!S.prog.srs[it.id])).slice(0, RO_N));
+}
+function roastSection(){
+  return `<section class="mod roast"><div class="mod-banner dark">${stoneSVG("nero", 760, 150, 9)}<div class="mb-txt"><span class="mb-num">Bonus · Madame Colette</span><span class="mb-fr" lang="fr">Sans pitié</span><span class="mb-pt">Ela pergunta, tu respondes ao microfone, e cada erro leva um insulto.</span></div></div>
+    <div class="lrows">${roSets().map(x=>{ const b=roBest(x.id); return `<button class="lrow" data-act="roast" data-id="${x.id}"><span class="lnum">${x.num}</span><span class="ltxt"><b lang="fr">${h(x.fr)}</b><small>${h(x.pt)}</small></span>${b!=null?`<span class="lstat ${b>=14?"done":b>=10?"next":"redo"}">${b}/20</span>`:"<span></span>"}${ic("chevR","chev")}</button>`; }).join("")}</div></section>`;
+}
+function coletteSays(line, cls){
+  return `<figure class="ro-say${cls?" "+cls:""}"><span class="ro-av" aria-hidden="true"><i>${stoneSVG("nero", 80, 80, 3)}</i><b>C</b></span><div class="ro-bubble"><blockquote lang="fr">${frHtml(line[0])}</blockquote><figcaption>${ptHtml(line[1])}</figcaption></div></figure>`;
+}
+// one line of words, the wrong ones wrapped in a tag; French spacing before ? ! : ;
+function roLine(toks, tag){ return toks.map((x,k)=>(k ? (/^[?!:;»]/.test(x.w) ? " " : " ") : "") + (x.bad ? `<${tag}>${h(frTypo(x.w))}</${tag}>` : h(frTypo(x.w)))).join(""); }
+const RO_RING = '<svg class="ro-ring" viewBox="0 0 200 130" aria-hidden="true"><path pathLength="100" d="M62 24C100 6 170 12 182 52c12 40-42 68-86 66C50 116 14 96 18 62 22 32 70 14 120 16c20 1 36 6 48 14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>';
+const Roast = {
+  open:false, set:null, items:[], k:0, stage:"", gen:0, cancels:new Set(), att:[], verdict:null, line:null, aside:null, used:new Set(), noMic:false, rnd:Math.random, t0:0, active:0, flushed:0, listening:false,
+  get typed(){ return !MIC_OK || this.noMic; },
+  start(set){
+    if(!roSet(set) || !roPool(set).length) return;
+    if(Sheet.isOpen) Sheet.close(true);
+    Tap.stop(); Voice.stop();
+    this.set=set; this.items=roDraw(set); this.k=0; this.att=this.items.map(()=>[]); this.verdict=null; this.aside=null; this.used=new Set();
+    this.rnd=seeded(Date.now() & 0xffffff); this.open=true; this.listening=false; this.active=0; this.flushed=0; this.t0=performance.now();
+    Ov.show("roast", this.html()); Wake.hold("roast");
+    this.intro();
+  },
+  html(){
+    const x=roSet(this.set);
+    return `<div class="pl ro-pl" role="dialog" aria-modal="true" aria-label="Madame Colette">
+      <header class="pl-top"><button class="icon-btn" data-act="ro-close" aria-label="Fechar">${ic("x")}</button><div class="pl-title"><span>Sans pitié · ${h(x.fr)}</span><b lang="fr">Madame Colette</b></div><span class="icon-btn ghostly"></span></header>
+      <div class="pl-prog"><div class="pl-track"><i id="pl-fill"></i></div><span id="pl-left"></span></div>
+      <div class="pl-stage ro-stage" id="pl-stage">${dialHtml("nero", 5)}<div class="pl-card ro-card" id="pl-card"></div></div>
+      <footer class="pl-ctl" id="pl-ctl"></footer></div>`;
+  },
+  it(){ return this.items[this.k]; },
+  question(){ const it=this.it(); return `Como se diz ${qpt(it.pt)}${/[?!]$/.test(it.pt)?"":"?"}`; },
+  timeNow(){ return this.active + (this.open ? performance.now()-this.t0 : 0); },
+  delay(ms){ return new Promise(res=>{ let t=0; const fin=()=>{ clearTimeout(t); this.cancels.delete(fin); res(); }; this.cancels.add(fin); t=setTimeout(fin, ms); }); },
+  stop(){ this.gen++; [...this.cancels].forEach(f=>f()); this.cancels.clear(); Voice.stop(); if(listenFr.cur) listenFr.cur.stop(); },
+  pick(kind){
+    let a=(COLETTE.lines[kind]||COLETTE.lines.bad).filter(l=>!l[2] || l[2]===(this.typed?"t":"s"));
+    const f=a.filter(l=>!this.used.has(l[0])); if(f.length) a=f;
+    const l=a[Math.floor(this.rnd()*a.length)]; this.used.add(l[0]); return l;
+  },
+  async say(text, g){
+    const mark=on=>{ const el=$(".ro-say"); if(el) el.classList.toggle("talk", on); };
+    mark(true); const r=await sayFr(text, "A", false, ()=>g===this.gen); if(g===this.gen) mark(false);
+    return r;
+  },
+  async intro(){
+    const g=++this.gen, st=Object.assign({}, LS.get("colette", null)||{});
+    this.line = st.met ? COLETTE.hello[Math.floor(this.rnd()*COLETTE.hello.length)] : COLETTE.intro;
+    if(!st.met){ st.met=true; LS.set("colette", st); }
+    this.stage="intro"; this.paint(); setDial("cjudge");
+    await this.say(this.line[0], g); if(g!==this.gen) return;
+    await this.delay(400*FAST); if(g!==this.gen) return;
+    this.ask();
+  },
+  go(){ if(this.stage==="intro"){ this.stop(); this.ask(); } },
+  async ask(){
+    const g=++this.gen, alive=()=>g===this.gen, n=this.items.length;
+    this.verdict=null; this.listening=false;
+    this.aside = n>4 && this.k===Math.floor(n/2) ? COLETTE.mid : n>1 && this.k===n-1 ? COLETTE.last : null;
+    this.stage="ask"; this.paint();
+    if(this.typed && !IS_MOBILE) setTimeout(()=>{ const i=$("#ro-in"); if(i) i.focus(); }, 30);
+    if(this.aside){ setDial("cjudge"); await this.say(this.aside[0], g); if(!alive()) return; }
+    if(narratorVoiceOn()){ setDial("cask"); await sayLine(this.question(), alive); if(!alive()) return; }
+    this.stage="answer"; setDial("answer");
+  },
+  async hear(){
+    if(!["ask","answer"].includes(this.stage) || !narratorVoiceOn()) return;
+    this.stop(); const g=this.gen; setDial("cask");
+    await sayLine(this.question(), ()=>g===this.gen);
+    if(g===this.gen){ this.stage="answer"; setDial("answer"); }
+  },
+  async mic(){
+    if(!this.open || this.typed) return;
+    if(this.listening){ if(listenFr.cur) listenFr.cur.stop(); return; }   // second tap: done speaking
+    if(!["ask","answer","verdict"].includes(this.stage)) return;
+    this.stop(); const g=this.gen; await sleep(80); if(g!==this.gen) return;
+    this.stage="listen"; this.listening=true; this.paint(); setDial("mic");
+    const r=await listenFr(9000); this.listening=false;
+    if(g!==this.gen) return;
+    if(!r.ok && ["not-allowed","service-not-allowed","audio-capture","unsupported","start"].includes(r.err)){
+      this.noMic=true; toast(`${micErrText(r.err)} Escreve a resposta.`); this.stage="answer"; this.paint(); setDial("answer"); return;
+    }
+    if(!r.ok && r.err==="network"){ toast(micErrText(r.err)); this.stage="answer"; this.paint(); setDial("answer"); return; }
+    this.judge(r.ok ? r.alts : null);
+  },
+  submit(){
+    if(!this.open || !["ask","answer"].includes(this.stage)) return;
+    const i=$("#ro-in"), v=i ? i.value.trim() : "";
+    this.stop(); this.judge(v ? [v] : null);
+  },
+  skip(){ if(!["ask","answer","listen"].includes(this.stage)) return; this.stop(); this.listening=false; this.judge(null, true); },
+  async judge(alts, gaveUp){
+    const g=++this.gen, target=fill(this.it().fr), typed=this.typed, tries=this.att[this.k];
+    const prev=tries.length ? tries[tries.length-1].s : null;
+    let d=null; (alts||[]).forEach(a=>{ const x=roastDiff(target, a, typed); if(!d || x.score>d.score) d=x; });
+    const kind = gaveUp ? "skip" : roastKind(d, prev, typed), s = d ? d.score : 0;
+    tries.push({ s, kind });
+    const v=roastSlots(d, typed), l=this.pick(kind);
+    let fr=roastFill(l[0], v), pt=roastFill(l[1], v);
+    if(kind==="good" && d){ const t = d.missing.length ? COLETTE.tail.miss : d.subs.length ? COLETTE.tail.sub : d.extras.length ? COLETTE.tail.extra : typed && d.acc.length ? COLETTE.tail.acc : null; if(t){ fr+=" "+roastFill(t[0], v); pt+=" "+roastFill(t[1], v); } }
+    this.verdict={ kind, d, s, fr, pt, gaveUp:!!gaveUp, typed };
+    this.stage="verdict"; this.paint(); setDial("cjudge"); buzz(s>=0.8 ? 20 : [30,60,30]);
+    await this.say(fr, g); if(g!==this.gen) return;
+    if(s<0.95){ await this.delay(260*FAST); if(g!==this.gen) return; setDial("listen"); await this.say(roastFill(COLETTE.model, { fr:target }), g); if(g!==this.gen) return; }
+    setDial("cnext");
+  },
+  retry(){
+    if(this.stage!=="verdict") return;
+    if(!this.typed){ this.mic(); return; }
+    this.stop(); this.stage="answer"; this.aside=null; this.paint(); setDial("answer");
+    const i=$("#ro-in"); if(i) i.focus();
+  },
+  async replay(){ if(this.stage!=="verdict") return; this.stop(); const g=this.gen; setDial("listen"); await this.say(fill(this.it().fr), g); if(g===this.gen) setDial("cnext"); },
+  next(){ if(this.stage!=="verdict") return; this.stop(); this.k++; if(this.k<this.items.length) this.ask(); else this.finish(); },
+  finish(){
+    this.stop(); this.flushTime(); Wake.drop("roast"); this.stage="done";
+    const { raw, note }=roastNote(this.att.map(a=>a.length ? a[0].s : 0));
+    const atFirst=this.att.filter(a=>a.length && a[0].s>=0.8).length;
+    const insults=this.att.reduce((n,a)=>n+a.filter(x=>!["perfect","good","better"].includes(x.kind)).length, 0);
+    const best=roBest(this.set);
+    addHistory({ d:Date.now(), k:"roast", set:this.set, n:this.items.length, note, sec:Math.round(this.timeNow()/1000) }); saveProg();
+    const b=COLETTE.verdict.find(x=>raw<x[0]) || COLETTE.verdict[COLETTE.verdict.length-1];
+    this.line=[roastFill(b[2], { n:note }), roastFill(b[3], { n:note })];
+    $("#pl-fill").style.width="100%"; $("#pl-left").textContent="";
+    $("#pl-stage").dataset.stage="done";
+    $("#pl-card").innerHTML=`<div class="pl-done ro-done">
+      <div class="ro-grade" role="img" aria-label="Nota: ${note} em 20">${RO_RING}<b>${note}</b><span>/20</span></div>
+      <p class="eyebrow" lang="fr">${h(b[1])}</p>
+      ${coletteSays(this.line)}
+      <ul class="facts center"><li><b>${this.items.length}</b><span>frases</span></li><li><b>${atFirst}</b><span>certas à primeira</span></li><li><b>${insults}</b><span>${insults===1?"insulto":"insultos"}</span></li></ul>
+      <p class="muted sm">${best==null ? "Primeira nota aqui. Agora é subir." : note>best ? `Nova melhor nota aqui. A anterior era ${best}/20.` : `A tua melhor nota aqui: ${best}/20.`}</p></div>`;
+    $("#pl-ctl").innerHTML=`<div class="done-actions"><button class="btn ghost" data-act="ro-close">Fechar</button><button class="btn primary" data-act="ro-again">${ic("repeat")} Outra ronda</button></div>`;
+    setDial("done"); buzz(30);
+    this.say(this.line[0], ++this.gen);
+  },
+  flushTime(){ const a=this.timeNow(), d=Math.floor((a-this.flushed)/1000); if(d>0){ addPractice(d); this.flushed+=d*1000; saveProg(); } },
+  close(silent){
+    if(!this.open) return;
+    this.stop(); if(this.stage!=="done") this.flushTime();
+    this.listening=false; this.open=false; Wake.drop("roast");
+    if(Ov.kind==="roast") Ov.hide();
+    if(!silent) render();
+  },
+  interrupt(){
+    if(!this.open || this.stage==="done") return;
+    this.flushTime(); this.stop(); this.listening=false;
+    if(this.stage==="verdict") setDial("cnext"); else { this.stage="answer"; this.paint(); setDial("answer"); }
+  },
+  diffHtml(){
+    const v=this.verdict, d=v.d, cls=scoreLabel(v.s)[1];
+    const said = d ? roLine(d.h, "s") : `<em>${v.gaveUp ? "desististe" : v.typed ? "resposta vazia" : "silêncio"}</em>`;
+    const right = d ? roLine(d.t, "mark") : frHtml(this.it().fr);
+    return `<div class="ro-diff">
+      <div class="ro-row"><span class="ro-k">${v.typed ? "Escreveste" : "Ouvi"}</span><p lang="fr">${said}</p>${d ? `<span class="sc ${cls}">${Math.round(v.s*100)}%</span>` : ""}</div>
+      <div class="ro-row ok"><span class="ro-k">Correto</span><p lang="fr">${right}</p></div></div>`;
+  },
+  paint(){
+    const card=$("#pl-card"), ctl=$("#pl-ctl"), stg=$("#pl-stage"); if(!card || this.stage==="done") return;
+    const it=this.it(), n=this.items.length, typed=this.typed;
+    stg.dataset.stage=this.stage;
+    $("#pl-fill").style.width=(100*(this.k+(this.stage==="verdict"?1:0))/n).toFixed(1)+"%";
+    $("#pl-left").textContent = this.stage==="intro" ? `${n} frases` : `${this.k+1} de ${n}`;
+    if(this.stage==="intro"){
+      card.innerHTML=`${coletteSays(this.line)}<p class="ro-how">${typed
+        ? `Ela pergunta em português, tu escreves a resposta em francês, e ela corrige-te… à maneira dela.${IN_VIEWER ? " Na app instalada no telemóvel respondes ao microfone." : ""}`
+        : "Ela pergunta em português, tu tocas no microfone e respondes em francês, e ela corrige-te… à maneira dela."}</p>`;
+      ctl.innerHTML=`<div class="pl-sub"><button class="btn primary" data-act="ro-go">Começar ${ic("chevR")}</button></div>`;
+      return;
+    }
+    const q=`<p class="pc-label">Como se diz</p><p class="pc-pt">${ptHtml(it.pt)}</p>`;
+    if(this.stage==="verdict"){
+      card.innerHTML=`<div class="ro-q">${q}</div>${this.diffHtml()}${coletteSays([this.verdict.fr, this.verdict.pt])}`;
+      ctl.innerHTML=`<div class="done-actions"><button class="btn ghost" data-act="ro-retry">${ic(typed?"repeat":"mic")} ${this.verdict.s<0.95?"Tentar outra vez":"Outra vez"}</button><button class="btn primary" data-act="ro-next">${this.k===n-1?"Ver a nota":"Seguinte"} ${ic("chevR")}</button></div><div class="pl-sub"><button class="chip-btn" data-act="ro-replay">${ic("volume")} Ouvir a resposta</button></div>`;
+      return;
+    }
+    const listen=this.stage==="listen";
+    card.innerHTML=(this.aside && !listen ? coletteSays(this.aside, "mini") : "") + q + (listen ? `<p class="ro-listening" aria-live="polite">${ic("mic")} A ouvir… responde em francês.</p>` : "");
+    const hearBtn = narratorVoiceOn() && !listen ? `<button class="chip-btn" data-act="ro-hear">${ic("volume")} Ouvir a pergunta</button>` : "";
+    ctl.innerHTML = typed
+      ? `<form class="ro-type" id="ro-form" autocomplete="off"><input id="ro-in" lang="fr" type="text" enterkeyhint="send" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Escreve em francês…" aria-label="A tua resposta em francês"><button class="btn primary" type="submit">Enviar</button></form><div class="pl-sub"><button class="chip-btn" data-act="ro-skip">Não sei</button>${hearBtn}</div>`
+      : `<div class="pl-main ro-main"><button class="cbtn big ro-mic${listen?" rec":""}" data-act="ro-mic" aria-label="${listen?"Parar de ouvir":"Responder ao microfone"}">${ic("mic")}<small>${listen?"Toca quando acabares":"Responder"}</small></button></div><div class="pl-sub"><button class="chip-btn" data-act="ro-skip">Não sei</button>${hearBtn}</div>`;
   }
 };
 
@@ -1121,6 +1286,7 @@ const Nav = {
     this.guard=false;
     if(Ov.kind==="player") P.close();
     else if(Ov.kind==="review") R.close();
+    else if(Ov.kind==="roast") Roast.close();
     else if(Ov.kind==="welcome") Welcome.start();
     else if(Sheet.isOpen) Sheet.close();
     else if(S.tab!=="hoje") goTab("hoje");
@@ -1145,9 +1311,10 @@ document.addEventListener("visibilitychange", ()=>{
   if(document.visibilityState==="visible"){ Wake.refresh(); return; }
   if(P.mode) { if(IS_MOBILE && P.playing){ P.pause(); } else P.flushTime(); }
   if(R.open){ if(IS_MOBILE) R.interrupt(); else R.flushTime(); }
+  if(Roast.open){ if(IS_MOBILE) Roast.interrupt(); else Roast.flushTime(); }
   if(IS_MOBILE){ Tap.stop(); Voice.stop(); }
 });
-window.addEventListener("pagehide", ()=>{ if(P.mode){ P.flushTime(); P.saveResume(); } if(R.open) R.flushTime(); });
+window.addEventListener("pagehide", ()=>{ if(P.mode){ P.flushTime(); P.saveResume(); } if(R.open) R.flushTime(); if(Roast.open) Roast.flushTime(); });
 window.addEventListener("beforeinstallprompt", e=>{ e.preventDefault(); installEvt=e; if(S.tab==="hoje" && !Ov.kind) schedule(); });
 window.addEventListener("appinstalled", ()=>{ installEvt=null; toast("App instalada. Já a tens no ecrã principal."); if(S.tab==="hoje") schedule(); });
 // While the phone keyboard is open, the tab bar steps aside (and comes back when it closes, even if the field keeps focus)
@@ -1162,6 +1329,7 @@ document.addEventListener("focusin", kbLater);
 document.addEventListener("focusout", kbLater);
 
 /* ---------- Events ---------- */
+document.addEventListener("submit", e=>{ if(e.target && e.target.id==="ro-form"){ e.preventDefault(); Roast.submit(); } });
 document.addEventListener("click", async e=>{
   const a=e.target.closest("[data-act]"); if(!a) return;
   const act=a.dataset.act, id=a.dataset.id;
@@ -1170,8 +1338,16 @@ document.addEventListener("click", async e=>{
     case "settings": openSettings(); break;
     case "sheet-close": Sheet.close(); break;
     case "lesson": openLesson(id); break;
-    case "bonus": openBonus(id); break;
-    case "play-bonus": { const B=BONUS_BY_ID[id]; if(B) P.open(B, { bonus:true }); break; }
+    case "roast": Roast.start(id); break;
+    case "ro-close": Roast.close(); break;
+    case "ro-go": Roast.go(); break;
+    case "ro-mic": Roast.mic(); break;
+    case "ro-skip": Roast.skip(); break;
+    case "ro-hear": Roast.hear(); break;
+    case "ro-retry": Roast.retry(); break;
+    case "ro-next": Roast.next(); break;
+    case "ro-replay": Roast.replay(); break;
+    case "ro-again": { const st=Roast.set; Roast.close(true); Roast.start(st); break; }
     case "play-lesson": { const L=LESSON_BY_ID[id]; if(L) P.open(L); break; }
     case "restart-lesson": { const L=LESSON_BY_ID[id]; if(L) P.open(L, { restart:true }); break; }
     case "play-dialogue": { const L=LESSON_BY_ID[id]; if(L) P.open(L, { dialogue:true }); break; }
@@ -1239,7 +1415,7 @@ document.addEventListener("toggle", e=>{
 }, true);
 document.addEventListener("keydown", e=>{
   if(isField(e.target)) return;
-  if(e.key==="Escape"){ if(Ov.kind==="player") P.close(); else if(Ov.kind==="review") R.close(); else if(Sheet.isOpen) Sheet.close(); return; }
+  if(e.key==="Escape"){ if(Ov.kind==="player") P.close(); else if(Ov.kind==="review") R.close(); else if(Ov.kind==="roast") Roast.close(); else if(Sheet.isOpen) Sheet.close(); return; }
   if(Ov.kind==="player" && !P.finished){
     if(e.key===" " || e.key==="k"){ e.preventDefault(); P.toggle(); }
     else if(e.key==="ArrowRight"){ e.preventDefault(); if(P.waitFin) P.doneWait(); else P.skip(); }
@@ -1248,6 +1424,9 @@ document.addEventListener("keydown", e=>{
   } else if(Ov.kind==="review"){
     if(e.key===" "){ e.preventDefault(); if(R.stage==="grade") R.replay(); else R.show(); }
     else if(["1","2","3"].includes(e.key)) R.grade(+e.key-1);
+  } else if(Ov.kind==="roast" && e.target===document.body){
+    if(e.key===" "){ e.preventDefault(); if(Roast.stage==="intro") Roast.go(); else Roast.mic(); }
+    else if(e.key==="Enter" && Roast.stage==="verdict"){ e.preventDefault(); Roast.next(); }
   }
 });
 // tooltips for the charts (hover, focus and tap)

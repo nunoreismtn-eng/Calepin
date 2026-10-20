@@ -68,7 +68,7 @@ function speechMock(opts) {
     Object.defineProperty(window, 'speechSynthesis', { value: synth, configurable: true });
     window.SpeechSynthesisUtterance = Utt;
     class Rec { constructor(){ this.lang=''; }
-      start(){ window.__recStarted=(window.__recStarted||0)+1; setTimeout(()=>{ const txt=window.__heard || 'je voudrais parler à madame moreau'; this.onresult && this.onresult({ results:[ Object.assign([{ transcript:txt }], { isFinal:true }) ] }); this.onend && this.onend(); }, 40); }
+      start(){ window.__recStarted=(window.__recStarted||0)+1; if(window.__recErr){ const er=window.__recErr; setTimeout(()=>{ this.onerror && this.onerror({ error:er }); this.onend && this.onend(); }, 40); return; } setTimeout(()=>{ const txt=window.__heard || 'je voudrais parler à madame moreau'; this.onresult && this.onresult({ results:[ Object.assign([{ transcript:txt }], { isFinal:true }) ] }); this.onend && this.onend(); }, 40); }
       stop(){} abort(){} }
     window.webkitSpeechRecognition = Rec; window.SpeechRecognition = Rec;
   })();`;

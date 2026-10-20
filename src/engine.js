@@ -115,6 +115,87 @@ function listenFr(maxMs){
 }
 listenFr.cur=null;
 
+/* ---------- Sans pitié: what was said, word by word, against the target (for Madame Colette's remarks) ---------- */
+function roastToks(text){
+  const disp=String(text||"").trim().split(/\s+/).filter(Boolean), toks=[];
+  disp.forEach((d,di)=>d.replace(/[’'\-]/g," ").split(/\s+/).forEach(o=>{ const n=normFr(o); if(n) n.split(" ").forEach(w=>toks.push({ n:w, o:o.replace(/[^\p{L}\p{N}]+/gu,""), di })); }));
+  return { disp, toks };
+}
+function charSim(a, b){
+  const m=a.length, n=b.length; if(!m || !n) return 0;
+  let p=Array.from({ length:n+1 }, (_,j)=>j);
+  for(let i=1;i<=m;i++){ const c=[i]; for(let j=1;j<=n;j++) c[j]=Math.min(p[j]+1, c[j-1]+1, p[j-1]+(a[i-1]===b[j-1]?0:1)); p=c; }
+  return 1-p[n]/Math.max(m,n);
+}
+const bare = w => String(w||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/œ/g,"oe").replace(/æ/g,"ae");
+// how a word sounds, roughly: the recogniser may write «parlé» for «parler», «et» for «est», «mot» for «mots»
+const PHON_W = { est:"e", et:"e", es:"e", ai:"e" };
+function phon(o, n){
+  let w = /\d/.test(o) ? n : String(o||"").toLowerCase();
+  if(PHON_W[w]) return PHON_W[w];
+  w=w.replace(/(aient|ais|ait|ai|ées|ée|és|ez|er|é)$/,"§");
+  w=bare(w);
+  while(w.length>2 && /[sxtd]$/.test(w)) w=w.slice(0,-1);
+  if(w.length>2) w=w.replace(/e$/,"");
+  return w.replace(/(.)\1+/g,"$1");
+}
+// word-level alignment (spoken answers compare sounds, typed answers compare spelling): what was missing, swapped, added
+function roastDiff(target, heard, typed){
+  const T=roastToks(fill(target)), H=roastToks(heard), a=T.toks, b=H.toks, m=a.length, n=b.length;
+  [a,b].forEach(l=>l.forEach(t=>{ t.p=phon(t.o, t.n); }));
+  const same = typed ? (x,y)=>x.n===y.n : (x,y)=>x.n===y.n || x.p===y.p;
+  const D=[]; for(let i=0;i<=m;i++){ D.push(new Array(n+1).fill(0)); D[i][0]=i; } for(let j=0;j<=n;j++) D[0][j]=j;
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++) D[i][j]=Math.min(D[i-1][j]+1, D[i][j-1]+1, D[i-1][j-1]+(same(a[i-1],b[j-1])?0:1));
+  const ops=[]; let i=m, j=n;
+  while(i>0 || j>0){
+    if(i>0 && j>0 && D[i][j]===D[i-1][j-1]+(same(a[i-1],b[j-1])?0:1)){ ops.push({ t:same(a[i-1],b[j-1])?"ok":"sub", ti:i-1, hi:j-1 }); i--; j--; }
+    else if(i>0 && D[i][j]===D[i-1][j]+1){ ops.push({ t:"miss", ti:i-1 }); i--; }
+    else { ops.push({ t:"extra", hi:j-1 }); j--; }
+  }
+  ops.reverse();
+  const missing=[], subs=[], extras=[], acc=[], tBad=new Set(), hBad=new Set();
+  const word = x => x===a[0] && /^\p{Lu}\p{Ll}/u.test(x.o) ? x.o[0].toLowerCase()+x.o.slice(1) : x.o;   // «excellente», not «Excellente», when quoted on its own
+  ops.forEach(o=>{
+    const x=a[o.ti], y=b[o.hi];
+    if(o.t==="miss"){ missing.push(word(x)); tBad.add(x.di); }
+    else if(o.t==="extra"){ extras.push(y.o); hBad.add(y.di); }
+    else if(o.t==="sub"){ subs.push({ want:word(x), got:y.o.toLowerCase(), near:charSim(x.n, y.n)>=0.5 }); tBad.add(x.di); hBad.add(y.di); }
+    else if(typed && /\p{L}/u.test(x.o) && bare(x.o)===bare(y.o) && x.o.toLowerCase()!==y.o.toLowerCase()){ acc.push({ want:word(x), got:y.o }); tBad.add(x.di); hBad.add(y.di); }   // right letters, wrong accents (typed answers)
+  });
+  return { score:m ? Math.max(0, 1-D[m][n]/m) : 0, missing:missing.filter(Boolean), subs, extras:extras.filter(Boolean), acc, heardN:n,
+    t:T.disp.map((w,k)=>({ w, bad:tBad.has(k) })), h:H.disp.map((w,k)=>({ w, bad:hBad.has(k) })) };
+}
+// which kind of remark: the first try is judged on its own, a retry against the previous try
+function roastKind(d, prev, typed){
+  if(!d || !d.heardN) return "silence";
+  const s=d.score;
+  if(prev!=null){
+    if(s>=0.8 && prev<0.8) return "better";
+    if(s<prev-0.15) return "worse";
+    if(s<0.45 && prev<0.45) return "again";
+  }
+  if(s>=0.95) return typed && d.acc.length ? "accents" : "perfect";
+  if(s>=0.8) return "good";
+  if(s<0.45) return "bad";
+  if(d.subs.some(x=>x.near)) return "near";
+  if(d.subs.length) return "sub";
+  if(d.missing.length) return "miss";
+  if(d.extras.length) return "extra";
+  return "bad";
+}
+// the words that go into the remark: the most telling slip (longest word, near-misses first)
+function roastSlots(d, typed){
+  const long=arr=>arr.filter(w=>w.length>1).sort((x,y)=>y.length-x.length)[0] || arr[0] || "";
+  if(!d) return { miss:"", want:"", got:"", extra:"" };
+  const sub=d.subs.find(x=>x.near) || d.subs.slice().sort((x,y)=>y.want.length-x.want.length)[0] || (typed && d.acc[0]) || null;
+  return { miss:long(d.missing), want:sub?sub.want:"", got:sub?sub.got:"", extra:long(d.extras) };
+}
+const roastFill = (t, v) => String(t).replace(/\{(\w+)\}/g, (m,k)=> v[k]!=null && v[k]!=="" ? v[k] : m);
+function roastNote(scores){
+  const avg=scores.length ? scores.reduce((x,y)=>x+y,0)/scores.length : 0, raw=Math.round(avg*20);
+  return { raw, note:Math.min(19, raw) };   // 20 is for God, as French teachers say
+}
+
 /* ---------- Voices ---------- */
 const FEM = /denise|eloise|éloïse|hortense|julie|am[eé]lie|audrey|marie|c[eé]line|virginie|aur[eé]lie|charlotte|\bl[eé]a\b|chantal|sylvie|vivienne|brigitte|coralie|jacqueline|yvette|ariane|raquel|fernanda|joana|catarina|female|femme|woman|x-fr[ac]-/i;   // fr-fr-x-fra/frc: Google's female French voices on Android
 const MASC = /henri|\bpaul\b|thomas|r[eé]mi|claude|gilles|antoine|nicolas|daniel|j[eé]r[oô]me|alain|guillaume|fabrice|\bjean\b|maxime|\byves\b|mathieu|duarte|\bmale\b|homme|\bman\b|x-fr[bd]-/i;
@@ -316,34 +397,6 @@ function buildLesson(L, ctx){
 function buildDialogue(L, ctx){
   const S=[]; let u=0;
   L.dialogue.forEach((d,j)=>{ u++; S.push({ t:"fr", who:d[0], text:d[1], card:{ kind:"line", who:d[0], fr:d[1], pt:d[2], j }, u, ph:"dialogue" }); S.push({ t:"gap", sec:0.45, u, ph:"dialogue" }); });
-  return finalizeScript(S, ctx);
-}
-// Bonus · Sans filtre: the narrator asks for a polite phrase, a grumpy French voice answers what people really say
-const BONUS_CUES = ["Repete, com convicção.", "Agora tu, com atitude.", "Outra vez, com desdém.", "Repete. Sem sorrir.", "Com mais vontade.", "Agora de sobrolho franzido."];
-function buildBonus(B, ctx){
-  ctx=ctx||{};
-  const pf=ctx.pause||1.3, rnd=seeded(hashStr(B.id+"·"+(ctx.seed||0)));
-  const pick=a=>a[Math.floor(rnd()*a.length)];
-  const S=[]; let u=0;
-  const add=st=>{ st.u=u; st.ph="bonus"; S.push(st); return st; };
-  const unit=()=>{ u++; };
-  const q=t=>{ const x="“"+String(t).trim().replace(/\.$/,"")+"”"; return /[?!…]”$/.test(x) ? x : x+"."; };   // keeps ! and ? for the tone
-  unit();
-  add({ t:"pt", text:`Ronda ${B.n} do «Sans filtre»: «${B.fr}».`, card:{ kind:"btitle" } });
-  add({ t:"pt", text:B.intro, card:{ kind:"say", text:B.intro } });
-  B.items.forEach(([pol, rude, lit, who], k)=>{
-    unit();
-    add({ t:"pt", text:"Como se diz: "+q(pol), card:{ kind:"joke", label:"Como se diz", pt:pol, fr:rude, lit, who:who||"C", k } });
-    add({ t:"wait", k:"answer", ans:rude, sec:waitSec("answer", rude, pf) });
-    add({ t:"fr", who:who||"C", text:rude, reveal:true });
-    add({ t:"pt", text:"Tradução livre: "+q(lit) });
-    add({ t:"pt", text:pick(BONUS_CUES), cue:true });
-    add({ t:"wait", k:"repeat", ans:rude, sec:waitSec("repeat", rude, pf) });
-    add({ t:"fr", who:who||"C", text:rude });
-  });
-  unit();
-  const out="Fim da ronda. Lembra-te: isto é para rir. Com clientes, continua no «vous» e no sorriso.";
-  add({ t:"pt", text:out, card:{ kind:"end", text:out } });
   return finalizeScript(S, ctx);
 }
 function stepSec(st, ctx){

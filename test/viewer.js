@@ -13,6 +13,14 @@ const { fonts, speechMock } = require('./lib');
   console.log('H1', await page.locator('h1').innerText(), '| notice', (await page.locator('.notice').first().innerText()).replace(/\n/g, ' '), '| link', await page.locator('.notice a').getAttribute('href'));
   console.log('MIC buttons', await page.locator('[data-act="check"]').count(), '| rail link', await page.locator('.rail-foot a').count());
   await page.screenshot({ path: __dirname + '/shots/60-viewer.png' });
+  // Madame Colette in the viewer: no microphone, so the answers are typed
+  await page.locator('[data-tab="licoes"]:visible').first().click(); await page.evaluate(() => { window.__ttsMs = 3000; });
+  await page.click('[data-act="roast"][data-id="m1"]'); await page.waitForSelector('.ro-how');
+  console.log('COLETTE how', await page.locator('.ro-how').innerText());
+  await page.evaluate(() => { window.__ttsMs = 20; }); await page.click('[data-act="ro-go"]');
+  await page.waitForSelector('#ro-in'); await page.fill('#ro-in', 'bonjour'); await page.keyboard.press('Enter');
+  await page.waitForSelector('#pl-stage[data-stage="verdict"]');
+  console.log('COLETTE typed verdict', (await page.locator('.ro-say').innerText()).replace(/\n/g, ' | '), '| mic buttons', await page.locator('[data-act="ro-mic"]').count());
   console.log('ERRORS', JSON.stringify(errors));
   await browser.close();
 })().catch(e => { console.error('FAIL', e); process.exit(1); });
