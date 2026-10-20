@@ -278,10 +278,6 @@ body.typing .tabbar{ display:none; }
 .lstat.done{ color:var(--verd-ink); background:var(--verd-soft); }
 .lstat.next{ color:var(--brass-ink); background:var(--brass-soft); }
 .lstat.redo{ color:var(--danger); background:var(--danger-soft); }
-/* bonus · sans filtre */
-.bn-list{ margin-top:22px; border-top:1px solid var(--line); border-bottom:0; }
-.bn-pol{ font-size:12.5px; line-height:1.4; color:var(--ink-4); margin-top:3px; }
-.pc-lit{ margin-top:12px; font:500 15px/1.45 var(--f-ui); color:var(--ink-3); text-wrap:balance; }
 
 /* lesson sheet */
 .ls-head{ position:relative; height:116px; border-radius:var(--r-sm); overflow:hidden; border:1px solid var(--line); }
@@ -560,6 +556,58 @@ body.typing .tabbar{ display:none; }
   *, *::before, *::after{ animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; }
   .d-arc.count{ animation:drain var(--d, 3s) linear forwards !important; }
 }
+
+/* ---------- Bonus · Sans pitié (Madame Colette) ---------- */
+.ro-stage[data-stage="verdict"] .dial, .ro-stage[data-stage="done"] .dial{ display:none; }
+.ro-stage[data-stage="verdict"], .ro-stage[data-stage="done"]{ padding-top:8px; }
+.ro-card{ min-height:0; }
+.ro-q .pc-label{ margin-bottom:4px; }
+.ro-stage[data-stage="verdict"] .ro-q .pc-pt{ font-size:16px; color:var(--ink-2); }
+.ro-how{ margin:16px auto 0; max-width:440px; color:var(--ink-3); font-size:14px; line-height:1.5; text-wrap:pretty; }
+.ro-listening{ margin-top:16px; display:inline-flex; align-items:center; gap:8px; color:var(--brass-ink); font-weight:600; font-size:14.5px; }
+.ro-listening .ic{ width:18px; height:18px; }
+/* her speech bubble: always Nero Marquina */
+.ro-say{ display:grid; grid-template-columns:40px minmax(0,1fr); gap:10px; align-items:start; text-align:left; margin:16px auto 0; max-width:520px; }
+.ro-av{ position:relative; width:40px; height:40px; }
+.ro-av i{ position:absolute; inset:0; border-radius:50%; overflow:hidden; box-shadow:0 0 0 2px var(--surface), 0 0 0 3px var(--line-2); }
+.ro-av i .stone{ position:absolute; inset:0; width:100%; height:100%; filter:none; }
+.ro-av b{ position:absolute; inset:0; display:grid; place-items:center; font:400 19px/1 var(--f-display); color:#F1F3F2; }
+.ro-av::after{ content:""; position:absolute; inset:-3px; border-radius:50%; border:2px solid var(--brass); opacity:0; }
+.ro-say.talk .ro-av::after{ animation:wave 1.5s ease-out infinite; }
+.ro-bubble{ padding:12px 15px 13px; border-radius:4px 18px 18px 18px; background:#1E2224; color:#F1F2F0; border:1px solid #2B3236; box-shadow:0 12px 26px -18px rgba(0,0,0,.65); }
+.ro-bubble blockquote{ margin:0; font:italic 400 19.5px/1.32 var(--f-fr); text-wrap:pretty; }
+.ro-bubble figcaption{ margin-top:6px; font:500 13px/1.45 var(--f-ui); color:#A6AFB2; text-wrap:pretty; }
+.ro-bubble .q-fr{ color:#9FD5CB; }
+.ro-say.mini{ margin:0 auto 18px; }
+.ro-say.mini blockquote{ font-size:17px; }
+/* what you said against what was expected */
+.ro-diff{ margin:14px auto 0; max-width:520px; display:grid; gap:6px; text-align:left; }
+.ro-row{ display:grid; grid-template-columns:76px minmax(0,1fr) auto; gap:10px; align-items:baseline; padding:9px 12px; border-radius:12px; background:var(--surface-2); border:1px solid var(--line); }
+.ro-k{ font:600 10.5px/1.2 var(--f-ui); letter-spacing:.1em; text-transform:uppercase; color:var(--ink-3); }
+.ro-row p{ font:italic 400 19px/1.3 var(--f-fr); color:var(--ink); overflow-wrap:anywhere; }
+.ro-row p em{ font:500 14px var(--f-ui); color:var(--ink-3); }
+.ro-row s{ color:var(--danger); text-decoration-thickness:1.5px; }
+.ro-row mark{ background:var(--brass-soft); color:var(--brass-ink); border-radius:4px; padding:0 3px; }
+.ro-row.ok p{ color:var(--verd-ink); }
+.ro-row .sc{ font:700 12px/1.4 var(--f-ui); }
+/* answering */
+.ro-main{ padding-bottom:20px; }
+.ro-mic.rec{ background:var(--brass); box-shadow:0 0 0 0 color-mix(in oklab, var(--brass) 55%, transparent); animation:ro-rec 1.3s ease-out infinite; }
+@keyframes ro-rec{ to{ box-shadow:0 0 0 18px transparent; } }
+.ro-type{ display:flex; gap:8px; width:100%; max-width:560px; margin:0 auto; }
+.ro-type input{ flex:1; min-width:0; height:52px; padding:0 14px; border-radius:12px; border:1px solid var(--line-2); background:var(--surface); color:var(--ink); font:italic 400 20px var(--f-fr); outline:0; }
+.ro-type input:focus{ border-color:var(--verd); box-shadow:0 0 0 3px var(--verd-soft); }
+.ro-type .btn{ flex:none; height:52px; }
+/* the note, circled in red pen */
+.ro-done{ margin:0 auto; }
+.ro-grade{ position:relative; width:200px; height:126px; display:flex; align-items:center; justify-content:center; color:var(--danger); margin:0 auto 4px; }
+.ro-ring{ position:absolute; inset:0; width:100%; height:100%; transform:rotate(-5deg); }
+.ro-ring path{ stroke-dasharray:100; stroke-dashoffset:100; animation:ro-ink .9s .15s ease-out forwards; }
+@keyframes ro-ink{ to{ stroke-dashoffset:0; } }
+.ro-grade b{ font:italic 400 66px/1 var(--f-fr); letter-spacing:-.02em; }
+.ro-grade span{ font:italic 400 30px/1 var(--f-fr); align-self:flex-end; margin:0 0 30px 2px; opacity:.85; }
+.ro-done .ro-say{ width:100%; }
+@media (prefers-reduced-motion: reduce){ .ro-ring path{ animation:none; stroke-dashoffset:0; } .ro-mic.rec, .ro-say.talk .ro-av::after{ animation:none; } }
 
 </style>
 </head>
@@ -1358,44 +1406,130 @@ const STONES = {
   nero:      { name:"Nero Marquina", base:"#1F2224", vein:"#E4E5E3" }
 };
 
-/* Bonus · Sans filtre: the polite phrase you mean, and how a grumpy French person would really say it. For laughs.
-   item: [polite pt, rude fr, free translation pt, speaker]                                                       */
-const BONUS = [
-{ id:"b1", n:1, fr:"Au quotidien", pt:"No dia a dia", stone:"nero",
-  intro:"Bónus: francês sem filtro. Eu digo-te uma frase bem-educada, tu tentas dizê-la em francês, e depois ouves como um francês mal-disposto a diria mesmo. É para rir, não para usar com clientes.",
-  items:[
-    ["Bom dia! Em que posso ajudar?","Qu'est-ce que tu veux ?","O que é que queres?","A"],
-    ["Desculpe, não percebi.","Hein ? Articule !","Hã? Articula!","C"],
-    ["Lamento, mas agora não consigo ajudar.","Débrouille-toi !","Desenrasca-te!","A"],
-    ["Com licença, posso passar?","Pousse-toi !","Sai da frente!","C"],
-    ["Não concordo consigo.","N'importe quoi !","Que disparate!","A"],
-    ["Pode falar um pouco mais baixo?","Tu peux la fermer deux minutes ?","Consegues calar-te dois minutos?","C"],
-    ["Que bom voltar a vê-lo!","Encore toi ?","Outra vez tu?","A"],
-    ["Não tenho a certeza.","Aucune idée, et je m'en fiche.","Não faço ideia, e quero lá saber.","C"],
-    ["Peço desculpa pelo atraso.","Oui, je suis en retard. Et alors ?","Sim, estou atrasado. E depois?","N"],
-    ["Podemos falar disso mais tarde?","Lâche-moi les baskets !","Larga-me os ténis! Ou seja: deixa-me em paz.","A"],
-    ["Acho que se enganou.","T'es complètement à côté de la plaque !","Estás completamente ao lado!","C"],
-    ["Importa-se de me deixar sozinho?","Casse-toi !","Põe-te a andar!","A"]
+/* Bonus · Sans pitié: Madame Colette asks how to say a phrase from the course, you answer at the microphone,
+   and she comments on every mistake. For laughs. A line is [fr, pt, only?]: only "s" = spoken answers, "t" = typed.
+   Slots: {miss} a word left out · {want}/{got} the word expected and the one said · {extra} a word added            */
+const COLETTE = {
+  intro:["Bonjour. Je suis Madame Colette. Quarante ans d'enseignement, zéro patience. Montre-moi ce que tu sais faire.",
+         "Bom dia. Sou a Madame Colette. Quarenta anos a ensinar, zero paciência. Mostra-me o que sabes fazer."],
+  hello:[
+    ["Encore toi ? Bon. Essaie de ne pas me décevoir.","Outra vez tu? Pronto. Tenta não me desiludir."],
+    ["Allez. Dix phrases. Ne me fais pas regretter d'être venue.","Vamos. Dez frases. Não me faças arrepender de ter vindo."],
+    ["Te revoilà. Par courage, ou par inconscience ?","Estás de volta. Por coragem ou por inconsciência?"],
+    ["J'ai pris un café bien serré. Je suis prête à souffrir.","Bebi um café bem forte. Estou pronta para sofrer."]
+  ],
+  mid:["La moitié. Courage. Pour moi, surtout.","A meio. Coragem. Sobretudo para mim."],
+  last:["Dernière phrase. Ne gâche pas tout maintenant.","Última frase. Não estragues tudo agora."],
+  lines:{
+    silence:[
+      ["Allô ? Il y a quelqu'un ?","Está? Está aí alguém?","s"],
+      ["Même ton silence a un accent.","Até o teu silêncio tem sotaque.","s"],
+      ["Tu as perdu ta langue ? Cherche-la, j'attends.","Perdeste a língua? Procura-a, eu espero."],
+      ["Rien ? Pas un mot ? Un bloc de granit est plus bavard que toi.","Nada? Nem uma palavra? Um bloco de granito fala mais do que tu."],
+      ["Le silence est d'or. Mais là, c'est juste de la paresse.","O silêncio é de ouro. Mas aqui é só preguiça."],
+      ["Une réponse vide. C'est audacieux.","Uma resposta vazia. É ousado.","t"],
+      ["Tu écris à l'encre invisible ?","Escreves com tinta invisível?","t"]
+    ],
+    perfect:[
+      ["Parfait. Ça m'énerve.","Perfeito. Irrita-me."],
+      ["Hmm. Tu as triché ?","Hmm. Fizeste batota?"],
+      ["Bien. Ne prends pas la grosse tête : elle est déjà assez grosse.","Bem. Não fiques com a mania: a cabeça já é grande que chegue."],
+      ["Correct. Je n'ai rien à dire, et je déteste ne rien avoir à dire.","Correto. Não tenho nada a dizer, e detesto não ter nada a dizer."],
+      ["Impeccable. Un vrai poli miroir. Ne t'habitue pas.","Impecável. Um verdadeiro polido espelho. Não te habitues."],
+      ["Bon. Même un Parisien n'y trouverait rien à redire.","Pronto. Nem um parisiense teria nada a apontar."],
+      ["Bravo. C'est presque suspect.","Bravo. Até é suspeito."]
+    ],
+    good:[
+      ["Pas mal. Pour quelqu'un qui débute.","Nada mau. Para quem está a começar."],
+      ["C'est correct. Correct, pas brillant.","Está correto. Correto, não brilhante."],
+      ["Presque. Comme un joint de cinq millimètres : ça se voit quand même.","Quase. Como uma junta de cinco milímetros: nota-se na mesma."],
+      ["On y est presque. Mais « presque », ça ne paie pas les factures.","Quase lá. Mas “quase” não paga as faturas."],
+      ["Bien… si on ferme les yeux. Et les oreilles.","Bem… se fecharmos os olhos. E os ouvidos.","s"],
+      ["Acceptable. Je ne saute pas de joie : j'ai mal au dos.","Aceitável. Não salto de alegria: tenho dores nas costas."]
+    ],
+    near:[
+      ["« {got} » ? C'est « {want} ». Un son de travers, et tout s'effondre.","«{got}»? É «{want}». Um som torto, e vai tudo abaixo.","s"],
+      ["« {got} »… presque « {want} ». Mais presque, c'est comme une tranche fissurée : ça ne se vend pas.","«{got}»… quase «{want}». Mas quase é como uma chapa rachada: não se vende."],
+      ["« {got} » au lieu de « {want} ». Ton accent vient de faire une victime.","«{got}» em vez de «{want}». O teu sotaque acabou de fazer uma vítima.","s"],
+      ["C'est « {want} ». Dans ta bouche, ça devient « {got} ». Impressionnant.","É «{want}». Na tua boca, vira «{got}». Impressionante.","s"],
+      ["« {want} », pas « {got} ». Articule : tu n'as pas un sac de ciment dans la bouche.","«{want}», não «{got}». Articula: não tens um saco de cimento na boca.","s"],
+      ["« {got} » ? Ça s'écrit « {want} ». Ton clavier est en grève ?","«{got}»? Escreve-se «{want}». O teu teclado está em greve?","t"],
+      ["« {got} », « {want} »… pour toi, c'est pareil. Pour moi, non.","«{got}», «{want}»… para ti é igual. Para mim, não."]
+    ],
+    sub:[
+      ["« {got} » ? Il n'y a pas de « {got} » dans cette phrase. Tu inventes, maintenant ?","«{got}»? Não há «{got}» nesta frase. Agora inventas?"],
+      ["J'attendais « {want} », j'ai eu « {got} ». Comme commander du marbre et recevoir du carrelage.","Esperava «{want}», recebi «{got}». Como encomendar mármore e receber cerâmico."],
+      ["« {got} » à la place de « {want} ». Molière vient de se retourner dans sa tombe.","«{got}» no lugar de «{want}». O Molière acabou de dar uma volta no túmulo."],
+      ["« {got} » ? Ce mot n'a rien à faire là. Comme toi dans une réunion d'architectes.","«{got}»? Esta palavra não tem nada a ver com isto. Como tu numa reunião de arquitetos."],
+      ["« {got} » ? Tu parles français, ou tu lis la notice d'un meuble suédois ?","«{got}»? Falas francês, ou estás a ler as instruções de um móvel sueco?"]
+    ],
+    miss:[
+      ["Il manque « {miss} ». Tu l'as vendu au marché noir ?","Falta «{miss}». Vendeste-o no mercado negro?"],
+      ["Où est passé « {miss} » ? Il est parti en vacances sans toi ?","Onde foi parar o «{miss}»? Foi de férias sem ti?"],
+      ["Tu as mangé « {miss} ». J'espère qu'il était bon.","Comeste o «{miss}». Espero que estivesse bom."],
+      ["Ta phrase a plus de trous qu'un travertin non rebouché. Il manque « {miss} ».","A tua frase tem mais buracos que um travertino por betumar. Falta «{miss}»."],
+      ["Il manque « {miss} ». Le client ne paiera pas une phrase incomplète.","Falta «{miss}». O cliente não paga uma frase incompleta."],
+      ["Une phrase, c'est comme un plan de travail : s'il manque un morceau, ça se voit. Ici, « {miss} ».","Uma frase é como uma bancada: se falta um bocado, nota-se. Aqui, «{miss}»."]
+    ],
+    extra:[
+      ["« {extra} » ? Personne ne t'a demandé « {extra} ».","«{extra}»? Ninguém te pediu «{extra}»."],
+      ["Tu as ajouté « {extra} ». Tu factures au mot, c'est ça ?","Acrescentaste «{extra}». Cobras à palavra, é isso?"],
+      ["Trop de mots. On dirait un devis plein d'options cachées.","Palavras a mais. Parece um orçamento cheio de extras escondidos."]
+    ],
+    bad:[
+      ["C'était quoi, ça ? Du français ? Du portugais ? Un camion qui recule ?","O que foi isso? Francês? Português? Um camião a fazer marcha-atrás?","s"],
+      ["J'ai compris un mot sur dix. Et je suis généreuse.","Percebi uma palavra em cada dez. E estou a ser generosa."],
+      ["Molière pleure. Et moi aussi, un peu.","O Molière está a chorar. E eu também, um bocadinho."],
+      ["Tu tailles le français comme du granit : à la masse.","Talhas o francês como granito: à marreta."],
+      ["Ta phrase est arrivée comme une tranche mal emballée : en mille morceaux.","A tua frase chegou como uma chapa mal embalada: em mil bocados."],
+      ["Si tu parles comme ça au client, il achète du carrelage.","Se falas assim com o cliente, ele compra cerâmico.","s"],
+      ["Non. Juste non.","Não. Simplesmente não."],
+      ["Même un traducteur automatique aurait honte.","Até um tradutor automático tinha vergonha."],
+      ["Tu écris comme tu parles : mal.","Escreves como falas: mal.","t"],
+      ["Si tu écris comme ça au client, il achète du carrelage.","Se escreves assim ao cliente, ele compra cerâmico.","t"]
+    ],
+    better:[
+      ["Ah ! Tu vois, quand tu fais un effort ?","Ah! Vês, quando te esforças?"],
+      ["Mieux. Ce n'était pas difficile, mais bon.","Melhor. Não era difícil, mas pronto."],
+      ["Voilà. Il suffisait de m'écouter. Comme toujours.","Pronto. Bastava ouvires-me. Como sempre."],
+      ["Enfin. J'ai vieilli de trois ans pendant cette phrase.","Finalmente. Envelheci três anos com esta frase."]
+    ],
+    worse:[
+      ["Tu as réussi à faire pire. C'est un talent.","Conseguiste fazer pior. É um talento."],
+      ["Plus tu essaies, pire c'est.","Quanto mais tentas, pior fica."],
+      ["Pire qu'avant. Je ne savais pas que c'était possible.","Pior do que antes. Não sabia que era possível."]
+    ],
+    again:[
+      ["Encore ? Tu le fais exprès ?","Outra vez? Fazes de propósito?"],
+      ["Même erreur, même accent. Au moins, c'est constant.","Mesmo erro, mesmo sotaque. Ao menos é consistente.","s"],
+      ["Je répète, tu répètes, et rien ne change. L'enfer, c'est ça.","Eu repito, tu repetes, e nada muda. O inferno é isto."]
+    ],
+    skip:[
+      ["Tu abandonnes ? Quelle surprise.","Desistes? Que surpresa."],
+      ["Tu ne sais pas ? Moi, si. Écoute et apprends.","Não sabes? Eu sei. Ouve e aprende."],
+      ["Ah, la sortie de secours. Quel courage.","Ah, a saída de emergência. Que coragem."],
+      ["Pas de réponse, pas d'erreur. Bien joué. Mais non.","Sem resposta, sem erro. Bem jogado. Mas não."]
+    ],
+    accents:[
+      ["Les mots sont bons. Les accents ? En rupture de stock ?","As palavras estão certas. Os acentos? Esgotados?"],
+      ["Sans accents, le français, c'est du marbre sans polissage.","Sem acentos, o francês é mármore sem polimento."],
+      ["« {got} » ? Ça s'écrit « {want} ». Avec l'accent, comme les gens civilisés.","«{got}»? Escreve-se «{want}». Com acento, como as pessoas civilizadas."]
+    ]
+  },
+  // a grudging "good" still points at the small slip
+  tail:{ miss:["Il manquait juste « {miss} ».","Só faltou «{miss}»."], sub:["Et c'est « {want} », pas « {got} ».","E é «{want}», não «{got}»."], acc:["Et « {want} » prend un accent.","E «{want}» leva acento."], extra:["Et « {extra} », personne ne te l'a demandé.","E «{extra}», ninguém to pediu."] },
+  model:"On dit : « {fr} »",
+  // the note is out of 20, as in French schools: [below, mention, fr, pt]
+  verdict:[
+    [5, "Catastrophique", "{n} sur 20. J'ai vu des pierres tombales plus bavardes.", "{n} em 20. Já vi lápides mais faladoras."],
+    [10, "Insuffisant", "{n} sur 20. Insuffisant. Mais tu as ouvert la bouche, c'est déjà ça.", "{n} em 20. Insuficiente. Mas abriste a boca, já é alguma coisa."],
+    [12, "Passable", "{n} sur 20. Passable. Comme un carrelage imitation marbre : de loin, ça passe.", "{n} em 20. Passável. Como cerâmico imitação mármore: ao longe, passa."],
+    [14, "Assez bien", "{n} sur 20. Assez bien. Ne t'emballe pas : « assez bien », ce n'est pas « bien ».", "{n} em 20. Razoável. Não te entusiasmes: «assez bien» não é «bien»."],
+    [16, "Bien", "{n} sur 20. Bien. Je ne le répéterai pas.", "{n} em 20. Bom. Não o vou repetir."],
+    [19, "Très bien", "{n} sur 20. Très bien. Je suis presque fière. Presque.", "{n} em 20. Muito bom. Estou quase orgulhosa. Quase."],
+    [99, "Très bien", "Dix-neuf. Le vingt, c'est pour Dieu, et le dix-neuf pour le professeur. Garde-le quand même.", "Dezanove. O vinte é para Deus, e o dezanove para o professor. Fica com ele na mesma."]
   ]
-},
-{ id:"b2", n:2, fr:"Sur le chantier", pt:"Em obra", stone:"nero",
-  intro:"Ronda dois: em obra. Eu digo-te a versão profissional, tu tentas em francês, e depois ouves o que te apetecia mesmo dizer a clientes, arquitetos e transportadores.",
-  items:[
-    ["Infelizmente, não conseguimos baixar mais o preço.","Et puis quoi encore ?","E que mais?! Era o que faltava.","C"],
-    ["Pagamento a noventa dias? Lamento, não é possível.","Même pas en rêve.","Nem em sonhos.","C"],
-    ["Lamento, a entrega vai atrasar uma semana.","C'est pas ma faute, c'est le transporteur.","Não é culpa minha, é da transportadora.","N"],
-    ["Pode confirmar as medidas, por favor?","Tu sais pas mesurer ou quoi ?","Não sabes medir ou quê?","C"],
-    ["O veio mais escuro é uma característica natural da pedra.","C'est naturel, mon pote. Ça s'appelle la nature.","É natural, pá. Chama-se natureza.","C"],
-    ["O preço reflete a qualidade do material.","La qualité, ça se paie. Sinon, y a le carrelage.","A qualidade paga-se. Senão, há sempre o cerâmico.","A"],
-    ["O arquiteto fez mais umas alterações ao projeto.","Encore ?! Il se fout de nous !","Outra vez?! Está a gozar connosco!","C"],
-    ["Vamos com calma, para ficar bem feito.","On n'est pas aux pièces !","Calma, ninguém aqui ganha à peça!","C"],
-    ["Penso que o problema não está na pedra.","Le problème, c'est pas la pierre, c'est vous.","O problema não é a pedra, é você.","A"],
-    ["A descarga em obra é da vossa responsabilidade.","Débrouillez-vous, je suis pas grutier.","Desenrasquem-se, não sou operador de grua.","C"],
-    ["Precisamos do sinal para avançar com a produção.","Pas d'acompte, pas de chantier.","Sem sinal, não há obra.","N"],
-    ["Tivemos um pequeno contratempo com a chapa.","La tranche est cassée. Fais chier !","A chapa partiu-se. Que chatice! Em versão impublicável.","C"]
-  ]
-}
-];
+};
 
 /* ===================== ENGINE: speech, lesson scripts, spaced review, scoring ===================== */
 const clamp = (v,a,b)=>Math.max(a,Math.min(b,v));
@@ -1513,6 +1647,87 @@ function listenFr(maxMs){
   });
 }
 listenFr.cur=null;
+
+/* ---------- Sans pitié: what was said, word by word, against the target (for Madame Colette's remarks) ---------- */
+function roastToks(text){
+  const disp=String(text||"").trim().split(/\s+/).filter(Boolean), toks=[];
+  disp.forEach((d,di)=>d.replace(/[’'\-]/g," ").split(/\s+/).forEach(o=>{ const n=normFr(o); if(n) n.split(" ").forEach(w=>toks.push({ n:w, o:o.replace(/[^\p{L}\p{N}]+/gu,""), di })); }));
+  return { disp, toks };
+}
+function charSim(a, b){
+  const m=a.length, n=b.length; if(!m || !n) return 0;
+  let p=Array.from({ length:n+1 }, (_,j)=>j);
+  for(let i=1;i<=m;i++){ const c=[i]; for(let j=1;j<=n;j++) c[j]=Math.min(p[j]+1, c[j-1]+1, p[j-1]+(a[i-1]===b[j-1]?0:1)); p=c; }
+  return 1-p[n]/Math.max(m,n);
+}
+const bare = w => String(w||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/œ/g,"oe").replace(/æ/g,"ae");
+// how a word sounds, roughly: the recogniser may write «parlé» for «parler», «et» for «est», «mot» for «mots»
+const PHON_W = { est:"e", et:"e", es:"e", ai:"e" };
+function phon(o, n){
+  let w = /\d/.test(o) ? n : String(o||"").toLowerCase();
+  if(PHON_W[w]) return PHON_W[w];
+  w=w.replace(/(aient|ais|ait|ai|ées|ée|és|ez|er|é)$/,"§");
+  w=bare(w);
+  while(w.length>2 && /[sxtd]$/.test(w)) w=w.slice(0,-1);
+  if(w.length>2) w=w.replace(/e$/,"");
+  return w.replace(/(.)\1+/g,"$1");
+}
+// word-level alignment (spoken answers compare sounds, typed answers compare spelling): what was missing, swapped, added
+function roastDiff(target, heard, typed){
+  const T=roastToks(fill(target)), H=roastToks(heard), a=T.toks, b=H.toks, m=a.length, n=b.length;
+  [a,b].forEach(l=>l.forEach(t=>{ t.p=phon(t.o, t.n); }));
+  const same = typed ? (x,y)=>x.n===y.n : (x,y)=>x.n===y.n || x.p===y.p;
+  const D=[]; for(let i=0;i<=m;i++){ D.push(new Array(n+1).fill(0)); D[i][0]=i; } for(let j=0;j<=n;j++) D[0][j]=j;
+  for(let i=1;i<=m;i++) for(let j=1;j<=n;j++) D[i][j]=Math.min(D[i-1][j]+1, D[i][j-1]+1, D[i-1][j-1]+(same(a[i-1],b[j-1])?0:1));
+  const ops=[]; let i=m, j=n;
+  while(i>0 || j>0){
+    if(i>0 && j>0 && D[i][j]===D[i-1][j-1]+(same(a[i-1],b[j-1])?0:1)){ ops.push({ t:same(a[i-1],b[j-1])?"ok":"sub", ti:i-1, hi:j-1 }); i--; j--; }
+    else if(i>0 && D[i][j]===D[i-1][j]+1){ ops.push({ t:"miss", ti:i-1 }); i--; }
+    else { ops.push({ t:"extra", hi:j-1 }); j--; }
+  }
+  ops.reverse();
+  const missing=[], subs=[], extras=[], acc=[], tBad=new Set(), hBad=new Set();
+  const word = x => x===a[0] && /^\p{Lu}\p{Ll}/u.test(x.o) ? x.o[0].toLowerCase()+x.o.slice(1) : x.o;   // «excellente», not «Excellente», when quoted on its own
+  ops.forEach(o=>{
+    const x=a[o.ti], y=b[o.hi];
+    if(o.t==="miss"){ missing.push(word(x)); tBad.add(x.di); }
+    else if(o.t==="extra"){ extras.push(y.o); hBad.add(y.di); }
+    else if(o.t==="sub"){ subs.push({ want:word(x), got:y.o.toLowerCase(), near:charSim(x.n, y.n)>=0.5 }); tBad.add(x.di); hBad.add(y.di); }
+    else if(typed && /\p{L}/u.test(x.o) && bare(x.o)===bare(y.o) && x.o.toLowerCase()!==y.o.toLowerCase()){ acc.push({ want:word(x), got:y.o }); tBad.add(x.di); hBad.add(y.di); }   // right letters, wrong accents (typed answers)
+  });
+  return { score:m ? Math.max(0, 1-D[m][n]/m) : 0, missing:missing.filter(Boolean), subs, extras:extras.filter(Boolean), acc, heardN:n,
+    t:T.disp.map((w,k)=>({ w, bad:tBad.has(k) })), h:H.disp.map((w,k)=>({ w, bad:hBad.has(k) })) };
+}
+// which kind of remark: the first try is judged on its own, a retry against the previous try
+function roastKind(d, prev, typed){
+  if(!d || !d.heardN) return "silence";
+  const s=d.score;
+  if(prev!=null){
+    if(s>=0.8 && prev<0.8) return "better";
+    if(s<prev-0.15) return "worse";
+    if(s<0.45 && prev<0.45) return "again";
+  }
+  if(s>=0.95) return typed && d.acc.length ? "accents" : "perfect";
+  if(s>=0.8) return "good";
+  if(s<0.45) return "bad";
+  if(d.subs.some(x=>x.near)) return "near";
+  if(d.subs.length) return "sub";
+  if(d.missing.length) return "miss";
+  if(d.extras.length) return "extra";
+  return "bad";
+}
+// the words that go into the remark: the most telling slip (longest word, near-misses first)
+function roastSlots(d, typed){
+  const long=arr=>arr.filter(w=>w.length>1).sort((x,y)=>y.length-x.length)[0] || arr[0] || "";
+  if(!d) return { miss:"", want:"", got:"", extra:"" };
+  const sub=d.subs.find(x=>x.near) || d.subs.slice().sort((x,y)=>y.want.length-x.want.length)[0] || (typed && d.acc[0]) || null;
+  return { miss:long(d.missing), want:sub?sub.want:"", got:sub?sub.got:"", extra:long(d.extras) };
+}
+const roastFill = (t, v) => String(t).replace(/\{(\w+)\}/g, (m,k)=> v[k]!=null && v[k]!=="" ? v[k] : m);
+function roastNote(scores){
+  const avg=scores.length ? scores.reduce((x,y)=>x+y,0)/scores.length : 0, raw=Math.round(avg*20);
+  return { raw, note:Math.min(19, raw) };   // 20 is for God, as French teachers say
+}
 
 /* ---------- Voices ---------- */
 const FEM = /denise|eloise|éloïse|hortense|julie|am[eé]lie|audrey|marie|c[eé]line|virginie|aur[eé]lie|charlotte|\bl[eé]a\b|chantal|sylvie|vivienne|brigitte|coralie|jacqueline|yvette|ariane|raquel|fernanda|joana|catarina|female|femme|woman|x-fr[ac]-/i;   // fr-fr-x-fra/frc: Google's female French voices on Android
@@ -1717,34 +1932,6 @@ function buildDialogue(L, ctx){
   L.dialogue.forEach((d,j)=>{ u++; S.push({ t:"fr", who:d[0], text:d[1], card:{ kind:"line", who:d[0], fr:d[1], pt:d[2], j }, u, ph:"dialogue" }); S.push({ t:"gap", sec:0.45, u, ph:"dialogue" }); });
   return finalizeScript(S, ctx);
 }
-// Bonus · Sans filtre: the narrator asks for a polite phrase, a grumpy French voice answers what people really say
-const BONUS_CUES = ["Repete, com convicção.", "Agora tu, com atitude.", "Outra vez, com desdém.", "Repete. Sem sorrir.", "Com mais vontade.", "Agora de sobrolho franzido."];
-function buildBonus(B, ctx){
-  ctx=ctx||{};
-  const pf=ctx.pause||1.3, rnd=seeded(hashStr(B.id+"·"+(ctx.seed||0)));
-  const pick=a=>a[Math.floor(rnd()*a.length)];
-  const S=[]; let u=0;
-  const add=st=>{ st.u=u; st.ph="bonus"; S.push(st); return st; };
-  const unit=()=>{ u++; };
-  const q=t=>{ const x="“"+String(t).trim().replace(/\.$/,"")+"”"; return /[?!…]”$/.test(x) ? x : x+"."; };   // keeps ! and ? for the tone
-  unit();
-  add({ t:"pt", text:`Ronda ${B.n} do «Sans filtre»: «${B.fr}».`, card:{ kind:"btitle" } });
-  add({ t:"pt", text:B.intro, card:{ kind:"say", text:B.intro } });
-  B.items.forEach(([pol, rude, lit, who], k)=>{
-    unit();
-    add({ t:"pt", text:"Como se diz: "+q(pol), card:{ kind:"joke", label:"Como se diz", pt:pol, fr:rude, lit, who:who||"C", k } });
-    add({ t:"wait", k:"answer", ans:rude, sec:waitSec("answer", rude, pf) });
-    add({ t:"fr", who:who||"C", text:rude, reveal:true });
-    add({ t:"pt", text:"Tradução livre: "+q(lit) });
-    add({ t:"pt", text:pick(BONUS_CUES), cue:true });
-    add({ t:"wait", k:"repeat", ans:rude, sec:waitSec("repeat", rude, pf) });
-    add({ t:"fr", who:who||"C", text:rude });
-  });
-  unit();
-  const out="Fim da ronda. Lembra-te: isto é para rir. Com clientes, continua no «vous» e no sorriso.";
-  add({ t:"pt", text:out, card:{ kind:"end", text:out } });
-  return finalizeScript(S, ctx);
-}
 function stepSec(st, ctx){
   const rate=(ctx&&ctx.rate)||0.92, narr=!!(ctx&&ctx.narrator);
   if(st.t==="fr") return speechSec(frSpeech(st.text),"fr",rate*(st.slow?0.8:1));
@@ -1823,7 +2010,6 @@ const h = escHtml;
 const pad2 = n => String(n).padStart(2,"0");
 const LESSON_BY_ID = {}; LESSONS.forEach(L=>{ LESSON_BY_ID[L.id]=L; });
 const MOD_BY_ID = {}; MODULES.forEach(M=>{ MOD_BY_ID[M.id]=M; });
-const BONUS_BY_ID = {}; BONUS.forEach(B=>{ BONUS_BY_ID[B.id]=B; });
 const WHO = { A:"Elle", N:"Vous", C:"Lui" };
 const N_ITEMS = Object.keys(ITEM_BY_ID).length, N_TERMS = GLOSSARY.reduce((a,g)=>a+g.items.length,0);
 const fold = t => String(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’']/g," ");
@@ -1997,7 +2183,6 @@ function refText(ref){
   if(p[0]==="i"){ const it=ITEM_BY_ID[p[1]+":"+p[2]]; return it ? { text:it.fr, who:"N" } : null; }
   if(p[0]==="g"){ const g=GLOSSARY[+p[1]], t=g && g.items[+p[2]]; return t ? { text:t[0], who:"A" } : null; }
   if(p[0]==="d"){ const L=LESSON_BY_ID[p[1]], d=L && L.dialogue[+p[2]]; return d ? { text:d[1], who:d[0] } : null; }
-  if(p[0]==="b"){ const B=BONUS_BY_ID[p[1]], t=B && B.items[+p[2]]; return t ? { text:t[1], who:t[3]||"C" } : null; }
   return null;
 }
 const Tap = {
@@ -2196,27 +2381,7 @@ function viewLicoes(){
     return `<section class="mod"><div class="mod-banner ${M.stone==="granit"?"dark":""}">${stoneSVG(M.stone, 760, 150, M.n*7)}<div class="mb-txt"><span class="mb-num">Module ${M.n}</span><span class="mb-fr" lang="fr">${h(M.fr)}</span><span class="mb-pt">${h(M.pt)} · ${h(M.blurb)}</span></div></div>
       <div class="lrows">${ls.map(L=>{ const [lab,cls]=lessonStatus(L,nx); return `<button class="lrow" data-act="lesson" data-id="${L.id}"><span class="lnum">${pad2(L.n)}</span><span class="ltxt"><b lang="fr">${frHtml(L.fr)}</b><small>${h(L.pt)}</small></span>${lab?`<span class="lstat ${cls}">${cls==="done"?ic("check"):""}${h(lab)}</span>`:"<span></span>"}${ic("chevR","chev")}</button>`; }).join("")}</div></section>`;
   }).join("")}
-  ${bonusSection()}`;
-}
-
-/* ---------- Bonus · Sans filtre (for laughs: the polite phrase, then what a grumpy Frenchman really says) ---------- */
-const bonusRuns = id => S.prog.history.filter(e=>e.k==="bonus" && e.id===id).length;
-function bonusScript(B){ return buildBonus(B, { pause:S.settings.pause, rate:S.settings.rate, narrator:narratorVoiceOn(), seed:today() }); }
-function bonusSection(){
-  return `<section class="mod bonus"><div class="mod-banner dark">${stoneSVG("nero", 760, 150, 9)}<div class="mb-txt"><span class="mb-num">Bonus</span><span class="mb-fr" lang="fr">Sans filtre</span><span class="mb-pt">O francês sem papas na língua · para rir, não para usar com clientes</span></div></div>
-    <div class="lrows">${BONUS.map(B=>{ const n=bonusRuns(B.id); return `<button class="lrow" data-act="bonus" data-id="${B.id}"><span class="lnum">R${B.n}</span><span class="ltxt"><b lang="fr">${frHtml(B.fr)}</b><small>${h(B.pt)} · ${B.items.length} frases</small></span>${n?`<span class="lstat done">${ic("check")}Feita${n>1?` ${n}×`:""}</span>`:"<span></span>"}${ic("chevR","chev")}</button>`; }).join("")}</div></section>`;
-}
-function openBonus(id){
-  const B=BONUS_BY_ID[id]; if(!B) return;
-  const sc=bonusScript(B), n=bonusRuns(B.id);
-  Sheet.open(`Sans filtre · ronde ${B.n}`, `
-    <div class="ls-head dark">${stoneSVG(B.stone, 640, 140, B.n+60)}<div class="ls-ht"><span class="mb-num">Bonus · <span lang="fr">Sans filtre</span></span><h3 class="fr-title" lang="fr">${frHtml(B.fr)}</h3><span class="mb-pt">${h(B.pt)}</span></div></div>
-    <p class="ls-sit">${ptHtml(B.intro)}</p>
-    ${cote(`${Math.max(1,Math.round(sc.total/60))} min · ${sc.spoken} respostas em voz alta`)}
-    <div class="ls-actions"><button class="btn primary" data-act="play-bonus" data-id="${B.id}">${ic("play","fill")} ${n?"Fazer outra vez":"Começar a ronda"}</button></div>
-    <details class="grp bn-list"><summary><span class="ltxt"><b lang="fr">Les phrases</b><small>${B.items.length} frases · espreitar antes estraga a piada</small></span>${ic("chevR","chev")}</summary>
-      <div class="flist">${B.items.map(([pol,rude,lit],k)=>`<div class="frow" data-row><div class="ftx"><p class="fr" lang="fr">${frHtml(rude)}</p><p class="pt">${h(lit)}</p><p class="bn-pol">Em vez de: ${h(pol)}</p></div><div class="pbtns"><button class="pbtn" data-act="say" data-ref="b:${B.id}:${k}" aria-label="Ouvir">${ic("volume")}</button></div></div>`).join("")}</div>
-    </details>`, { kind:"bonus" });
+  ${roastSection()}`;
 }
 function phraseRow(it){
   const sr=S.prog.srs[it.id], ref="i:"+it.id;
@@ -2329,7 +2494,7 @@ function historyList(){
     if(e.k==="dialogue" && L) return `Diálogo da lição ${pad2(L.n)}`;
     if(e.k==="review") return `Revisão · ${e.n} ${e.n===1?"frase":"frases"}${e.ok!=null?`, ${e.ok} sabidas`:""}`;
     if(e.k==="practice") return `Treino livre · ${e.n} frases`;
-    if(e.k==="bonus" && BONUS_BY_ID[e.id]) return `<span lang="fr">Sans filtre</span> · ronda ${BONUS_BY_ID[e.id].n}`;
+    if(e.k==="roast"){ const x=roSet(e.set); return `<span lang="fr">Madame Colette</span>${x?` · <span lang="fr">${h(x.fr)}</span>`:""} · ${e.note}/20`; }
     return "Prática"; };
   return `<section class="card"><div class="sec-head"><h2 class="sec-title">Histórico</h2></div><ul class="hist">${list.map(e=>`<li><span class="h-d">${h(relDayShort(dayKey(e.d)))}</span><span class="h-t">${label(e)}</span><span class="h-m">${h(fmtDur(e.sec||0))}</span></li>`).join("")}</ul></section>`;
 }
@@ -2368,13 +2533,13 @@ const P = {
     if(R.open) R.close(true);
     if(Sheet.isOpen) Sheet.close(true);
     Tap.stop(); Voice.stop();
-    this.mode=o.bonus?"bonus":o.dialogue?"dialogue":"lesson"; this.L=L; this.finished=false; this.fails=0;
-    const res=this.mode==="lesson" && !o.restart && S.prog.resume && S.prog.resume.id===L.id ? S.prog.resume : null;
+    this.mode=o.dialogue?"dialogue":"lesson"; this.L=L; this.finished=false; this.fails=0;
+    const res=!o.dialogue && !o.restart && S.prog.resume && S.prog.resume.id===L.id ? S.prog.resume : null;
     if(o.restart && S.prog.resume && S.prog.resume.id===L.id){ S.prog.resume=null; saveProg(); }
     this.seed=(res && res.seed) || today();
-    const prev = this.mode!=="lesson" ? [] : (res && Array.isArray(res.prev) ? res.prev.map(id=>ITEM_BY_ID[id]).filter(Boolean) : prevForLesson(L, S.prog.srs, today(), this.seed));
+    const prev = o.dialogue ? [] : (res && Array.isArray(res.prev) ? res.prev.map(id=>ITEM_BY_ID[id]).filter(Boolean) : prevForLesson(L, S.prog.srs, today(), this.seed));
     this.prevIds=prev.map(p=>p.id);
-    this.sc = this.mode==="bonus" ? buildBonus(L, this.ctx(L,[])) : o.dialogue ? buildDialogue(L, this.ctx(L,[])) : buildLesson(L, this.ctx(L, prev));
+    this.sc = o.dialogue ? buildDialogue(L, this.ctx(L,[])) : buildLesson(L, this.ctx(L, prev));
     this.i = res ? clamp(res.i|0, 0, this.sc.steps.length-1) : 0;
     this.curU=null; this.lastFr=null; this.card=null; this.active=0; this.flushed=0; this.pausedAt=0; this.playing=false;
     Ov.show("player", this.html());
@@ -2383,24 +2548,24 @@ const P = {
     this.play();
   },
   rebuild(){
-    if(!this.sc || this.mode!=="lesson") { if(this.sc && this.mode==="dialogue") this.sc=buildDialogue(this.L, this.ctx(this.L,[])); if(this.sc && this.mode==="bonus") this.sc=buildBonus(this.L, this.ctx(this.L,[])); this.paintProgress(); return; }
+    if(!this.sc || this.mode!=="lesson") { if(this.sc && this.mode==="dialogue") this.sc=buildDialogue(this.L, this.ctx(this.L,[])); this.paintProgress(); return; }
     const prev=this.prevIds.map(id=>ITEM_BY_ID[id]).filter(Boolean);
     this.sc=buildLesson(this.L, this.ctx(this.L, prev));
     this.paintProgress();
   },
   html(){
-    const L=this.L, bonus=this.mode==="bonus", stone=bonus ? L.stone : MOD_BY_ID[L.m].stone, lesson=this.mode==="lesson";
-    return `<div class="pl${bonus?" pl-bonus":""}" role="dialog" aria-modal="true" aria-label="${bonus?`Sans filtre, ronda ${L.n}`:`Lição ${L.n}`}">
+    const L=this.L, M=MOD_BY_ID[L.m], lesson=this.mode==="lesson";
+    return `<div class="pl" role="dialog" aria-modal="true" aria-label="Lição ${L.n}">
       <header class="pl-top">
         <button class="icon-btn" data-act="pl-close" aria-label="Fechar">${ic("x")}</button>
-        <div class="pl-title"><span>${bonus?`Sans filtre · ronde ${L.n}`:lesson?`Leçon ${pad2(L.n)}`:`Dialogue · leçon ${pad2(L.n)}`}</span><b lang="fr">${frHtml(L.fr)}</b></div>
+        <div class="pl-title"><span>${lesson?`Leçon ${pad2(L.n)}`:`Dialogue · leçon ${pad2(L.n)}`}</span><b lang="fr">${frHtml(L.fr)}</b></div>
         <button class="icon-btn" data-act="pl-pop" aria-label="Ritmo e texto" aria-expanded="false">${ic("sliders")}</button>
       </header>
       <div class="pl-pop" id="pl-pop" hidden>${this.popHtml()}</div>
       <div class="pl-prog"><div class="pl-track"><i id="pl-fill"></i></div><span id="pl-left"></span></div>
       ${lesson?`<ol class="pl-phases" id="pl-phases">${this.sc.phases.map(p=>{ const x=PHASES.find(y=>y.id===p); return `<li data-p="${p}"><span lang="fr">${x.fr}</span></li>`; }).join("")}</ol>`:""}
       <div class="pl-stage" id="pl-stage">
-        ${dialHtml(stone, L.n)}
+        ${dialHtml(M.stone, L.n)}
         <p class="pl-cue" id="pl-cue" aria-live="polite"></p>
         <div class="pl-card" id="pl-card"></div>
         <p class="pl-warn" id="pl-warn" hidden></p>
@@ -2538,7 +2703,7 @@ const P = {
       srsAddLesson(S.prog.srs, L, t);
       if(S.prog.resume && S.prog.resume.id===L.id) S.prog.resume=null;
     }
-    addHistory({ d:Date.now(), k:this.mode, id:L.id, sec:Math.round(this.active/1000) });
+    addHistory({ d:Date.now(), k:this.mode==="lesson"?"lesson":"dialogue", id:L.id, sec:Math.round(this.active/1000) });
     saveProg(); buzz(30);
     this.paintDone();
   },
@@ -2604,8 +2769,6 @@ const P = {
     else if(c.kind==="line"){
       html=`<div class="pc-dlg" id="pc-dlg">${L.dialogue.slice(0,c.j+1).map((d,k)=>`<div class="dl${k===c.j?" on":""}">${whoChip(d[0])}<div class="dl-t"><p class="fr" lang="fr">${sf?frHtml(d[1]):`<span class="audio-only">${ic("ear")} só áudio</span>`}</p>${S.settings.showPt?`<p class="pt">${ptHtml(d[2])}</p>`:""}</div></div>`).join("")}</div>`;
     }
-    else if(c.kind==="btitle") html=`<p class="pc-label">Bonus · <span lang="fr">Sans filtre</span></p><h2 class="pc-title" lang="fr">${frHtml(L.fr)}</h2><p class="pc-sub">${h(L.pt)}</p>`;
-    else if(c.kind==="joke") html=`<p class="pc-label">${h(c.label)}</p><p class="pc-pt">${ptHtml(c.pt)}</p>${frLine(c.fr, this.revealed)}${this.revealed?`<p class="pc-lit">“${h(c.lit)}”</p>`:""}`;
     else if(c.kind==="role") html=`<div class="pc-cue">${whoChip(c.who)}<p lang="fr">${sf?frHtml(c.cue):`<span class="audio-only">${ic("ear")} só áudio</span>`}</p></div><p class="pc-label">Responde</p><p class="pc-pt">${ptHtml(c.task)}</p>${frLine(c.fr, this.revealed)}`;
     else html=`<p class="pc-label">${h(c.label)}</p><p class="pc-pt">${ptHtml(c.pt)}</p>${frLine(this.part||c.fr, this.revealed||!!this.part)}`;
     el.innerHTML=html; el.dataset.kind=c.kind;
@@ -2616,14 +2779,6 @@ const P = {
     $("#pl-fill").style.width="100%"; $("#pl-left").textContent="";
     $$("#pl-phases li").forEach(li=>{ li.classList.remove("on"); li.classList.add("past"); });
     const mins=Math.max(1, Math.round(this.active/60000));
-    if(this.mode==="bonus"){
-      const nx=BONUS.find(B=>B.n===L.n+1);
-      stage.innerHTML=`<div class="pl-done"><div class="medal">${stoneSVG(L.stone, 160, 160, L.n)}<span>${ic("check")}</span></div><p class="eyebrow" lang="fr">Sans filtre · ronde ${L.n}</p><h2 class="fr-title" lang="fr">${frHtml(L.fr)}</h2>
-        <ul class="facts center"><li><b>${mins}</b><span>${mins===1?"minuto":"minutos"}</span></li><li><b>${L.items.length}</b><span>frases sem filtro</span></li><li><b>${this.sc.spoken}</b><span>respostas em voz alta</span></li></ul>
-        <p class="muted">${ptHtml("Já sabes o que eles dizem quando estão mal-dispostos. Com clientes, continua no «vous» e no sorriso.")}</p></div>`;
-      ctl.innerHTML=`<div class="done-actions"><button class="btn ghost" data-act="pl-close">Fechar</button>${nx?`<button class="btn primary" data-act="play-bonus" data-id="${nx.id}">Ronda ${nx.n} ${ic("chevR")}</button>`:`<button class="btn primary" data-act="play-bonus" data-id="${L.id}">${ic("repeat")} Outra vez</button>`}</div>`;
-      return;
-    }
     if(this.mode==="dialogue"){
       stage.innerHTML=`<div class="pl-done"><div class="medal">${stoneSVG(M.stone, 160, 160, L.n)}<span>${ic("check")}</span></div><p class="eyebrow" lang="fr">Dialogue écouté</p><h2 class="fr-title" lang="fr">${frHtml(L.fr)}</h2><p class="muted">Ouve-o mais vezes até perceberes tudo sem ler.</p></div>`;
       ctl.innerHTML=`<div class="done-actions"><button class="btn ghost" data-act="pl-close">Fechar</button><button class="btn primary" data-act="play-dialogue" data-id="${L.id}">${ic("repeat")} Ouvir outra vez</button></div>`;
@@ -2750,6 +2905,203 @@ const R = {
     else if(this.stage==="listen") ctl=`<div class="pl-sub"><span class="listening big">${ic("mic")} A ouvir… diz a frase em francês.</span></div>`;
     else ctl=`<div class="pl-sub">${MIC_OK?`<button class="chip-btn hot" data-act="rv-mic">${ic("mic")} Responder ao microfone</button>`:""}<button class="chip-btn" data-act="rv-show">Mostrar a resposta</button></div>`;
     $("#pl-ctl").innerHTML=ctl;
+  }
+};
+
+/* ---------- Bonus · Sans pitié: Madame Colette asks, you answer at the microphone, every mistake gets a remark ---------- */
+Object.assign(DIAL, { cask:["Question","Ouve a pergunta"], cjudge:["Colette","A julgar-te"], cnext:["Alors ?","Outra vez ou seguinte"] });
+const RO_N = 10, RO_NUM = ["I","II","III","IV"];
+const roSets = () => MODULES.map(M=>({ id:M.id, num:RO_NUM[M.n-1]||String(M.n), fr:M.fr, pt:M.pt })).concat([{ id:"all", num:"I–IV", fr:"Tout mélangé", pt:"Os quatro módulos" }]);
+const roSet = id => roSets().find(x=>x.id===id) || null;
+function roBest(id){ let b=null; S.prog.history.forEach(e=>{ if(e.k==="roast" && e.set===id && (b==null || e.note>b)) b=e.note; }); return b; }
+// whole sentences from the course (no name placeholders), phrases you have already met first
+function roPool(set){ return Object.values(ITEM_BY_ID).filter(it=>(set==="all" || (LESSON_BY_ID[it.lesson]||{}).m===set) && !/[{}]/.test(it.fr) && /[.?!]\s*$/.test(it.fr) && normFr(it.fr).split(" ").length>=2); }
+function roDraw(set){
+  const r=seeded((Date.now() ^ hashStr(set)) & 0xffffff), mix=a=>{ for(let i=a.length-1;i>0;i--){ const j=Math.floor(r()*(i+1)); [a[i],a[j]]=[a[j],a[i]]; } return a; };
+  const pool=mix(roPool(set));
+  return mix(pool.filter(it=>S.prog.srs[it.id]).concat(pool.filter(it=>!S.prog.srs[it.id])).slice(0, RO_N));
+}
+function roastSection(){
+  return `<section class="mod roast"><div class="mod-banner dark">${stoneSVG("nero", 760, 150, 9)}<div class="mb-txt"><span class="mb-num">Bonus · Madame Colette</span><span class="mb-fr" lang="fr">Sans pitié</span><span class="mb-pt">Ela pergunta, tu respondes ao microfone, e cada erro leva um insulto.</span></div></div>
+    <div class="lrows">${roSets().map(x=>{ const b=roBest(x.id); return `<button class="lrow" data-act="roast" data-id="${x.id}"><span class="lnum">${x.num}</span><span class="ltxt"><b lang="fr">${h(x.fr)}</b><small>${h(x.pt)}</small></span>${b!=null?`<span class="lstat ${b>=14?"done":b>=10?"next":"redo"}">${b}/20</span>`:"<span></span>"}${ic("chevR","chev")}</button>`; }).join("")}</div></section>`;
+}
+function coletteSays(line, cls){
+  return `<figure class="ro-say${cls?" "+cls:""}"><span class="ro-av" aria-hidden="true"><i>${stoneSVG("nero", 80, 80, 3)}</i><b>C</b></span><div class="ro-bubble"><blockquote lang="fr">${frHtml(line[0])}</blockquote><figcaption>${ptHtml(line[1])}</figcaption></div></figure>`;
+}
+// one line of words, the wrong ones wrapped in a tag; French spacing before ? ! : ;
+function roLine(toks, tag){ return toks.map((x,k)=>(k ? (/^[?!:;»]/.test(x.w) ? " " : " ") : "") + (x.bad ? `<${tag}>${h(frTypo(x.w))}</${tag}>` : h(frTypo(x.w)))).join(""); }
+const RO_RING = '<svg class="ro-ring" viewBox="0 0 200 130" aria-hidden="true"><path pathLength="100" d="M62 24C100 6 170 12 182 52c12 40-42 68-86 66C50 116 14 96 18 62 22 32 70 14 120 16c20 1 36 6 48 14" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"/></svg>';
+const Roast = {
+  open:false, set:null, items:[], k:0, stage:"", gen:0, cancels:new Set(), att:[], verdict:null, line:null, aside:null, used:new Set(), noMic:false, rnd:Math.random, t0:0, active:0, flushed:0, listening:false,
+  get typed(){ return !MIC_OK || this.noMic; },
+  start(set){
+    if(!roSet(set) || !roPool(set).length) return;
+    if(Sheet.isOpen) Sheet.close(true);
+    Tap.stop(); Voice.stop();
+    this.set=set; this.items=roDraw(set); this.k=0; this.att=this.items.map(()=>[]); this.verdict=null; this.aside=null; this.used=new Set();
+    this.rnd=seeded(Date.now() & 0xffffff); this.open=true; this.listening=false; this.active=0; this.flushed=0; this.t0=performance.now();
+    Ov.show("roast", this.html()); Wake.hold("roast");
+    this.intro();
+  },
+  html(){
+    const x=roSet(this.set);
+    return `<div class="pl ro-pl" role="dialog" aria-modal="true" aria-label="Madame Colette">
+      <header class="pl-top"><button class="icon-btn" data-act="ro-close" aria-label="Fechar">${ic("x")}</button><div class="pl-title"><span>Sans pitié · ${h(x.fr)}</span><b lang="fr">Madame Colette</b></div><span class="icon-btn ghostly"></span></header>
+      <div class="pl-prog"><div class="pl-track"><i id="pl-fill"></i></div><span id="pl-left"></span></div>
+      <div class="pl-stage ro-stage" id="pl-stage">${dialHtml("nero", 5)}<div class="pl-card ro-card" id="pl-card"></div></div>
+      <footer class="pl-ctl" id="pl-ctl"></footer></div>`;
+  },
+  it(){ return this.items[this.k]; },
+  question(){ const it=this.it(); return `Como se diz ${qpt(it.pt)}${/[?!]$/.test(it.pt)?"":"?"}`; },
+  timeNow(){ return this.active + (this.open ? performance.now()-this.t0 : 0); },
+  delay(ms){ return new Promise(res=>{ let t=0; const fin=()=>{ clearTimeout(t); this.cancels.delete(fin); res(); }; this.cancels.add(fin); t=setTimeout(fin, ms); }); },
+  stop(){ this.gen++; [...this.cancels].forEach(f=>f()); this.cancels.clear(); Voice.stop(); if(listenFr.cur) listenFr.cur.stop(); },
+  pick(kind){
+    let a=(COLETTE.lines[kind]||COLETTE.lines.bad).filter(l=>!l[2] || l[2]===(this.typed?"t":"s"));
+    const f=a.filter(l=>!this.used.has(l[0])); if(f.length) a=f;
+    const l=a[Math.floor(this.rnd()*a.length)]; this.used.add(l[0]); return l;
+  },
+  async say(text, g){
+    const mark=on=>{ const el=$(".ro-say"); if(el) el.classList.toggle("talk", on); };
+    mark(true); const r=await sayFr(text, "A", false, ()=>g===this.gen); if(g===this.gen) mark(false);
+    return r;
+  },
+  async intro(){
+    const g=++this.gen, st=Object.assign({}, LS.get("colette", null)||{});
+    this.line = st.met ? COLETTE.hello[Math.floor(this.rnd()*COLETTE.hello.length)] : COLETTE.intro;
+    if(!st.met){ st.met=true; LS.set("colette", st); }
+    this.stage="intro"; this.paint(); setDial("cjudge");
+    await this.say(this.line[0], g); if(g!==this.gen) return;
+    await this.delay(400*FAST); if(g!==this.gen) return;
+    this.ask();
+  },
+  go(){ if(this.stage==="intro"){ this.stop(); this.ask(); } },
+  async ask(){
+    const g=++this.gen, alive=()=>g===this.gen, n=this.items.length;
+    this.verdict=null; this.listening=false;
+    this.aside = n>4 && this.k===Math.floor(n/2) ? COLETTE.mid : n>1 && this.k===n-1 ? COLETTE.last : null;
+    this.stage="ask"; this.paint();
+    if(this.typed && !IS_MOBILE) setTimeout(()=>{ const i=$("#ro-in"); if(i) i.focus(); }, 30);
+    if(this.aside){ setDial("cjudge"); await this.say(this.aside[0], g); if(!alive()) return; }
+    if(narratorVoiceOn()){ setDial("cask"); await sayLine(this.question(), alive); if(!alive()) return; }
+    this.stage="answer"; setDial("answer");
+  },
+  async hear(){
+    if(!["ask","answer"].includes(this.stage) || !narratorVoiceOn()) return;
+    this.stop(); const g=this.gen; setDial("cask");
+    await sayLine(this.question(), ()=>g===this.gen);
+    if(g===this.gen){ this.stage="answer"; setDial("answer"); }
+  },
+  async mic(){
+    if(!this.open || this.typed) return;
+    if(this.listening){ if(listenFr.cur) listenFr.cur.stop(); return; }   // second tap: done speaking
+    if(!["ask","answer","verdict"].includes(this.stage)) return;
+    this.stop(); const g=this.gen; await sleep(80); if(g!==this.gen) return;
+    this.stage="listen"; this.listening=true; this.paint(); setDial("mic");
+    const r=await listenFr(9000); this.listening=false;
+    if(g!==this.gen) return;
+    if(!r.ok && ["not-allowed","service-not-allowed","audio-capture","unsupported","start"].includes(r.err)){
+      this.noMic=true; toast(`${micErrText(r.err)} Escreve a resposta.`); this.stage="answer"; this.paint(); setDial("answer"); return;
+    }
+    if(!r.ok && r.err==="network"){ toast(micErrText(r.err)); this.stage="answer"; this.paint(); setDial("answer"); return; }
+    this.judge(r.ok ? r.alts : null);
+  },
+  submit(){
+    if(!this.open || !["ask","answer"].includes(this.stage)) return;
+    const i=$("#ro-in"), v=i ? i.value.trim() : "";
+    this.stop(); this.judge(v ? [v] : null);
+  },
+  skip(){ if(!["ask","answer","listen"].includes(this.stage)) return; this.stop(); this.listening=false; this.judge(null, true); },
+  async judge(alts, gaveUp){
+    const g=++this.gen, target=fill(this.it().fr), typed=this.typed, tries=this.att[this.k];
+    const prev=tries.length ? tries[tries.length-1].s : null;
+    let d=null; (alts||[]).forEach(a=>{ const x=roastDiff(target, a, typed); if(!d || x.score>d.score) d=x; });
+    const kind = gaveUp ? "skip" : roastKind(d, prev, typed), s = d ? d.score : 0;
+    tries.push({ s, kind });
+    const v=roastSlots(d, typed), l=this.pick(kind);
+    let fr=roastFill(l[0], v), pt=roastFill(l[1], v);
+    if(kind==="good" && d){ const t = d.missing.length ? COLETTE.tail.miss : d.subs.length ? COLETTE.tail.sub : d.extras.length ? COLETTE.tail.extra : typed && d.acc.length ? COLETTE.tail.acc : null; if(t){ fr+=" "+roastFill(t[0], v); pt+=" "+roastFill(t[1], v); } }
+    this.verdict={ kind, d, s, fr, pt, gaveUp:!!gaveUp, typed };
+    this.stage="verdict"; this.paint(); setDial("cjudge"); buzz(s>=0.8 ? 20 : [30,60,30]);
+    await this.say(fr, g); if(g!==this.gen) return;
+    if(s<0.95){ await this.delay(260*FAST); if(g!==this.gen) return; setDial("listen"); await this.say(roastFill(COLETTE.model, { fr:target }), g); if(g!==this.gen) return; }
+    setDial("cnext");
+  },
+  retry(){
+    if(this.stage!=="verdict") return;
+    if(!this.typed){ this.mic(); return; }
+    this.stop(); this.stage="answer"; this.aside=null; this.paint(); setDial("answer");
+    const i=$("#ro-in"); if(i) i.focus();
+  },
+  async replay(){ if(this.stage!=="verdict") return; this.stop(); const g=this.gen; setDial("listen"); await this.say(fill(this.it().fr), g); if(g===this.gen) setDial("cnext"); },
+  next(){ if(this.stage!=="verdict") return; this.stop(); this.k++; if(this.k<this.items.length) this.ask(); else this.finish(); },
+  finish(){
+    this.stop(); this.flushTime(); Wake.drop("roast"); this.stage="done";
+    const { raw, note }=roastNote(this.att.map(a=>a.length ? a[0].s : 0));
+    const atFirst=this.att.filter(a=>a.length && a[0].s>=0.8).length;
+    const insults=this.att.reduce((n,a)=>n+a.filter(x=>!["perfect","good","better"].includes(x.kind)).length, 0);
+    const best=roBest(this.set);
+    addHistory({ d:Date.now(), k:"roast", set:this.set, n:this.items.length, note, sec:Math.round(this.timeNow()/1000) }); saveProg();
+    const b=COLETTE.verdict.find(x=>raw<x[0]) || COLETTE.verdict[COLETTE.verdict.length-1];
+    this.line=[roastFill(b[2], { n:note }), roastFill(b[3], { n:note })];
+    $("#pl-fill").style.width="100%"; $("#pl-left").textContent="";
+    $("#pl-stage").dataset.stage="done";
+    $("#pl-card").innerHTML=`<div class="pl-done ro-done">
+      <div class="ro-grade" role="img" aria-label="Nota: ${note} em 20">${RO_RING}<b>${note}</b><span>/20</span></div>
+      <p class="eyebrow" lang="fr">${h(b[1])}</p>
+      ${coletteSays(this.line)}
+      <ul class="facts center"><li><b>${this.items.length}</b><span>frases</span></li><li><b>${atFirst}</b><span>certas à primeira</span></li><li><b>${insults}</b><span>${insults===1?"insulto":"insultos"}</span></li></ul>
+      <p class="muted sm">${best==null ? "Primeira nota aqui. Agora é subir." : note>best ? `Nova melhor nota aqui. A anterior era ${best}/20.` : `A tua melhor nota aqui: ${best}/20.`}</p></div>`;
+    $("#pl-ctl").innerHTML=`<div class="done-actions"><button class="btn ghost" data-act="ro-close">Fechar</button><button class="btn primary" data-act="ro-again">${ic("repeat")} Outra ronda</button></div>`;
+    setDial("done"); buzz(30);
+    this.say(this.line[0], ++this.gen);
+  },
+  flushTime(){ const a=this.timeNow(), d=Math.floor((a-this.flushed)/1000); if(d>0){ addPractice(d); this.flushed+=d*1000; saveProg(); } },
+  close(silent){
+    if(!this.open) return;
+    this.stop(); if(this.stage!=="done") this.flushTime();
+    this.listening=false; this.open=false; Wake.drop("roast");
+    if(Ov.kind==="roast") Ov.hide();
+    if(!silent) render();
+  },
+  interrupt(){
+    if(!this.open || this.stage==="done") return;
+    this.flushTime(); this.stop(); this.listening=false;
+    if(this.stage==="verdict") setDial("cnext"); else { this.stage="answer"; this.paint(); setDial("answer"); }
+  },
+  diffHtml(){
+    const v=this.verdict, d=v.d, cls=scoreLabel(v.s)[1];
+    const said = d ? roLine(d.h, "s") : `<em>${v.gaveUp ? "desististe" : v.typed ? "resposta vazia" : "silêncio"}</em>`;
+    const right = d ? roLine(d.t, "mark") : frHtml(this.it().fr);
+    return `<div class="ro-diff">
+      <div class="ro-row"><span class="ro-k">${v.typed ? "Escreveste" : "Ouvi"}</span><p lang="fr">${said}</p>${d ? `<span class="sc ${cls}">${Math.round(v.s*100)}%</span>` : ""}</div>
+      <div class="ro-row ok"><span class="ro-k">Correto</span><p lang="fr">${right}</p></div></div>`;
+  },
+  paint(){
+    const card=$("#pl-card"), ctl=$("#pl-ctl"), stg=$("#pl-stage"); if(!card || this.stage==="done") return;
+    const it=this.it(), n=this.items.length, typed=this.typed;
+    stg.dataset.stage=this.stage;
+    $("#pl-fill").style.width=(100*(this.k+(this.stage==="verdict"?1:0))/n).toFixed(1)+"%";
+    $("#pl-left").textContent = this.stage==="intro" ? `${n} frases` : `${this.k+1} de ${n}`;
+    if(this.stage==="intro"){
+      card.innerHTML=`${coletteSays(this.line)}<p class="ro-how">${typed
+        ? `Ela pergunta em português, tu escreves a resposta em francês, e ela corrige-te… à maneira dela.${IN_VIEWER ? " Na app instalada no telemóvel respondes ao microfone." : ""}`
+        : "Ela pergunta em português, tu tocas no microfone e respondes em francês, e ela corrige-te… à maneira dela."}</p>`;
+      ctl.innerHTML=`<div class="pl-sub"><button class="btn primary" data-act="ro-go">Começar ${ic("chevR")}</button></div>`;
+      return;
+    }
+    const q=`<p class="pc-label">Como se diz</p><p class="pc-pt">${ptHtml(it.pt)}</p>`;
+    if(this.stage==="verdict"){
+      card.innerHTML=`<div class="ro-q">${q}</div>${this.diffHtml()}${coletteSays([this.verdict.fr, this.verdict.pt])}`;
+      ctl.innerHTML=`<div class="done-actions"><button class="btn ghost" data-act="ro-retry">${ic(typed?"repeat":"mic")} ${this.verdict.s<0.95?"Tentar outra vez":"Outra vez"}</button><button class="btn primary" data-act="ro-next">${this.k===n-1?"Ver a nota":"Seguinte"} ${ic("chevR")}</button></div><div class="pl-sub"><button class="chip-btn" data-act="ro-replay">${ic("volume")} Ouvir a resposta</button></div>`;
+      return;
+    }
+    const listen=this.stage==="listen";
+    card.innerHTML=(this.aside && !listen ? coletteSays(this.aside, "mini") : "") + q + (listen ? `<p class="ro-listening" aria-live="polite">${ic("mic")} A ouvir… responde em francês.</p>` : "");
+    const hearBtn = narratorVoiceOn() && !listen ? `<button class="chip-btn" data-act="ro-hear">${ic("volume")} Ouvir a pergunta</button>` : "";
+    ctl.innerHTML = typed
+      ? `<form class="ro-type" id="ro-form" autocomplete="off"><input id="ro-in" lang="fr" type="text" enterkeyhint="send" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Escreve em francês…" aria-label="A tua resposta em francês"><button class="btn primary" type="submit">Enviar</button></form><div class="pl-sub"><button class="chip-btn" data-act="ro-skip">Não sei</button>${hearBtn}</div>`
+      : `<div class="pl-main ro-main"><button class="cbtn big ro-mic${listen?" rec":""}" data-act="ro-mic" aria-label="${listen?"Parar de ouvir":"Responder ao microfone"}">${ic("mic")}<small>${listen?"Toca quando acabares":"Responder"}</small></button></div><div class="pl-sub"><button class="chip-btn" data-act="ro-skip">Não sei</button>${hearBtn}</div>`;
   }
 };
 
@@ -2926,6 +3278,7 @@ const Nav = {
     this.guard=false;
     if(Ov.kind==="player") P.close();
     else if(Ov.kind==="review") R.close();
+    else if(Ov.kind==="roast") Roast.close();
     else if(Ov.kind==="welcome") Welcome.start();
     else if(Sheet.isOpen) Sheet.close();
     else if(S.tab!=="hoje") goTab("hoje");
@@ -2950,9 +3303,10 @@ document.addEventListener("visibilitychange", ()=>{
   if(document.visibilityState==="visible"){ Wake.refresh(); return; }
   if(P.mode) { if(IS_MOBILE && P.playing){ P.pause(); } else P.flushTime(); }
   if(R.open){ if(IS_MOBILE) R.interrupt(); else R.flushTime(); }
+  if(Roast.open){ if(IS_MOBILE) Roast.interrupt(); else Roast.flushTime(); }
   if(IS_MOBILE){ Tap.stop(); Voice.stop(); }
 });
-window.addEventListener("pagehide", ()=>{ if(P.mode){ P.flushTime(); P.saveResume(); } if(R.open) R.flushTime(); });
+window.addEventListener("pagehide", ()=>{ if(P.mode){ P.flushTime(); P.saveResume(); } if(R.open) R.flushTime(); if(Roast.open) Roast.flushTime(); });
 window.addEventListener("beforeinstallprompt", e=>{ e.preventDefault(); installEvt=e; if(S.tab==="hoje" && !Ov.kind) schedule(); });
 window.addEventListener("appinstalled", ()=>{ installEvt=null; toast("App instalada. Já a tens no ecrã principal."); if(S.tab==="hoje") schedule(); });
 // While the phone keyboard is open, the tab bar steps aside (and comes back when it closes, even if the field keeps focus)
@@ -2967,6 +3321,7 @@ document.addEventListener("focusin", kbLater);
 document.addEventListener("focusout", kbLater);
 
 /* ---------- Events ---------- */
+document.addEventListener("submit", e=>{ if(e.target && e.target.id==="ro-form"){ e.preventDefault(); Roast.submit(); } });
 document.addEventListener("click", async e=>{
   const a=e.target.closest("[data-act]"); if(!a) return;
   const act=a.dataset.act, id=a.dataset.id;
@@ -2975,8 +3330,16 @@ document.addEventListener("click", async e=>{
     case "settings": openSettings(); break;
     case "sheet-close": Sheet.close(); break;
     case "lesson": openLesson(id); break;
-    case "bonus": openBonus(id); break;
-    case "play-bonus": { const B=BONUS_BY_ID[id]; if(B) P.open(B, { bonus:true }); break; }
+    case "roast": Roast.start(id); break;
+    case "ro-close": Roast.close(); break;
+    case "ro-go": Roast.go(); break;
+    case "ro-mic": Roast.mic(); break;
+    case "ro-skip": Roast.skip(); break;
+    case "ro-hear": Roast.hear(); break;
+    case "ro-retry": Roast.retry(); break;
+    case "ro-next": Roast.next(); break;
+    case "ro-replay": Roast.replay(); break;
+    case "ro-again": { const st=Roast.set; Roast.close(true); Roast.start(st); break; }
     case "play-lesson": { const L=LESSON_BY_ID[id]; if(L) P.open(L); break; }
     case "restart-lesson": { const L=LESSON_BY_ID[id]; if(L) P.open(L, { restart:true }); break; }
     case "play-dialogue": { const L=LESSON_BY_ID[id]; if(L) P.open(L, { dialogue:true }); break; }
@@ -3044,7 +3407,7 @@ document.addEventListener("toggle", e=>{
 }, true);
 document.addEventListener("keydown", e=>{
   if(isField(e.target)) return;
-  if(e.key==="Escape"){ if(Ov.kind==="player") P.close(); else if(Ov.kind==="review") R.close(); else if(Sheet.isOpen) Sheet.close(); return; }
+  if(e.key==="Escape"){ if(Ov.kind==="player") P.close(); else if(Ov.kind==="review") R.close(); else if(Ov.kind==="roast") Roast.close(); else if(Sheet.isOpen) Sheet.close(); return; }
   if(Ov.kind==="player" && !P.finished){
     if(e.key===" " || e.key==="k"){ e.preventDefault(); P.toggle(); }
     else if(e.key==="ArrowRight"){ e.preventDefault(); if(P.waitFin) P.doneWait(); else P.skip(); }
@@ -3053,6 +3416,9 @@ document.addEventListener("keydown", e=>{
   } else if(Ov.kind==="review"){
     if(e.key===" "){ e.preventDefault(); if(R.stage==="grade") R.replay(); else R.show(); }
     else if(["1","2","3"].includes(e.key)) R.grade(+e.key-1);
+  } else if(Ov.kind==="roast" && e.target===document.body){
+    if(e.key===" "){ e.preventDefault(); if(Roast.stage==="intro") Roast.go(); else Roast.mic(); }
+    else if(e.key==="Enter" && Roast.stage==="verdict"){ e.preventDefault(); Roast.next(); }
   }
 });
 // tooltips for the charts (hover, focus and tap)
