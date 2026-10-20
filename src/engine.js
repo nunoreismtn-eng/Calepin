@@ -318,6 +318,34 @@ function buildDialogue(L, ctx){
   L.dialogue.forEach((d,j)=>{ u++; S.push({ t:"fr", who:d[0], text:d[1], card:{ kind:"line", who:d[0], fr:d[1], pt:d[2], j }, u, ph:"dialogue" }); S.push({ t:"gap", sec:0.45, u, ph:"dialogue" }); });
   return finalizeScript(S, ctx);
 }
+// Bonus · Sans filtre: the narrator asks for a polite phrase, a grumpy French voice answers what people really say
+const BONUS_CUES = ["Repete, com convicção.", "Agora tu, com atitude.", "Outra vez, com desdém.", "Repete. Sem sorrir.", "Com mais vontade.", "Agora de sobrolho franzido."];
+function buildBonus(B, ctx){
+  ctx=ctx||{};
+  const pf=ctx.pause||1.3, rnd=seeded(hashStr(B.id+"·"+(ctx.seed||0)));
+  const pick=a=>a[Math.floor(rnd()*a.length)];
+  const S=[]; let u=0;
+  const add=st=>{ st.u=u; st.ph="bonus"; S.push(st); return st; };
+  const unit=()=>{ u++; };
+  const q=t=>{ const x="“"+String(t).trim().replace(/\.$/,"")+"”"; return /[?!…]”$/.test(x) ? x : x+"."; };   // keeps ! and ? for the tone
+  unit();
+  add({ t:"pt", text:`Ronda ${B.n} do «Sans filtre»: «${B.fr}».`, card:{ kind:"btitle" } });
+  add({ t:"pt", text:B.intro, card:{ kind:"say", text:B.intro } });
+  B.items.forEach(([pol, rude, lit, who], k)=>{
+    unit();
+    add({ t:"pt", text:"Como se diz: "+q(pol), card:{ kind:"joke", label:"Como se diz", pt:pol, fr:rude, lit, who:who||"C", k } });
+    add({ t:"wait", k:"answer", ans:rude, sec:waitSec("answer", rude, pf) });
+    add({ t:"fr", who:who||"C", text:rude, reveal:true });
+    add({ t:"pt", text:"Tradução livre: "+q(lit) });
+    add({ t:"pt", text:pick(BONUS_CUES), cue:true });
+    add({ t:"wait", k:"repeat", ans:rude, sec:waitSec("repeat", rude, pf) });
+    add({ t:"fr", who:who||"C", text:rude });
+  });
+  unit();
+  const out="Fim da ronda. Lembra-te: isto é para rir. Com clientes, continua no «vous» e no sorriso.";
+  add({ t:"pt", text:out, card:{ kind:"end", text:out } });
+  return finalizeScript(S, ctx);
+}
 function stepSec(st, ctx){
   const rate=(ctx&&ctx.rate)||0.92, narr=!!(ctx&&ctx.narrator);
   if(st.t==="fr") return speechSec(frSpeech(st.text),"fr",rate*(st.slow?0.8:1));

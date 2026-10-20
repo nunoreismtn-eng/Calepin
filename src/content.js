@@ -765,5 +765,45 @@ const STONES = {
   carrara:   { name:"Carrara",   base:"#ECEDEB", vein:"#8E959A" },
   travertin: { name:"Travertin", base:"#D9C7A6", vein:"#A88C62" },
   quartzite: { name:"Quartzite", base:"#C9D1CC", vein:"#7F8F87" },
-  granit:    { name:"Granit",    base:"#55595C", vein:"#A2A6A8" }
+  granit:    { name:"Granit",    base:"#55595C", vein:"#A2A6A8" },
+  nero:      { name:"Nero Marquina", base:"#1F2224", vein:"#E4E5E3" }
 };
+
+/* Bonus · Sans filtre: the polite phrase you mean, and how a grumpy French person would really say it. For laughs.
+   item: [polite pt, rude fr, free translation pt, speaker]                                                       */
+const BONUS = [
+{ id:"b1", n:1, fr:"Au quotidien", pt:"No dia a dia", stone:"nero",
+  intro:"Bónus: francês sem filtro. Eu digo-te uma frase bem-educada, tu tentas dizê-la em francês, e depois ouves como um francês mal-disposto a diria mesmo. É para rir, não para usar com clientes.",
+  items:[
+    ["Bom dia! Em que posso ajudar?","Qu'est-ce que tu veux ?","O que é que queres?","A"],
+    ["Desculpe, não percebi.","Hein ? Articule !","Hã? Articula!","C"],
+    ["Lamento, mas agora não consigo ajudar.","Débrouille-toi !","Desenrasca-te!","A"],
+    ["Com licença, posso passar?","Pousse-toi !","Sai da frente!","C"],
+    ["Não concordo consigo.","N'importe quoi !","Que disparate!","A"],
+    ["Pode falar um pouco mais baixo?","Tu peux la fermer deux minutes ?","Consegues calar-te dois minutos?","C"],
+    ["Que bom voltar a vê-lo!","Encore toi ?","Outra vez tu?","A"],
+    ["Não tenho a certeza.","Aucune idée, et je m'en fiche.","Não faço ideia, e quero lá saber.","C"],
+    ["Peço desculpa pelo atraso.","Oui, je suis en retard. Et alors ?","Sim, estou atrasado. E depois?","N"],
+    ["Podemos falar disso mais tarde?","Lâche-moi les baskets !","Larga-me os ténis! Ou seja: deixa-me em paz.","A"],
+    ["Acho que se enganou.","T'es complètement à côté de la plaque !","Estás completamente ao lado!","C"],
+    ["Importa-se de me deixar sozinho?","Casse-toi !","Põe-te a andar!","A"]
+  ]
+},
+{ id:"b2", n:2, fr:"Sur le chantier", pt:"Em obra", stone:"nero",
+  intro:"Ronda dois: em obra. Eu digo-te a versão profissional, tu tentas em francês, e depois ouves o que te apetecia mesmo dizer a clientes, arquitetos e transportadores.",
+  items:[
+    ["Infelizmente, não conseguimos baixar mais o preço.","Et puis quoi encore ?","E que mais?! Era o que faltava.","C"],
+    ["Pagamento a noventa dias? Lamento, não é possível.","Même pas en rêve.","Nem em sonhos.","C"],
+    ["Lamento, a entrega vai atrasar uma semana.","C'est pas ma faute, c'est le transporteur.","Não é culpa minha, é da transportadora.","N"],
+    ["Pode confirmar as medidas, por favor?","Tu sais pas mesurer ou quoi ?","Não sabes medir ou quê?","C"],
+    ["O veio mais escuro é uma característica natural da pedra.","C'est naturel, mon pote. Ça s'appelle la nature.","É natural, pá. Chama-se natureza.","C"],
+    ["O preço reflete a qualidade do material.","La qualité, ça se paie. Sinon, y a le carrelage.","A qualidade paga-se. Senão, há sempre o cerâmico.","A"],
+    ["O arquiteto fez mais umas alterações ao projeto.","Encore ?! Il se fout de nous !","Outra vez?! Está a gozar connosco!","C"],
+    ["Vamos com calma, para ficar bem feito.","On n'est pas aux pièces !","Calma, ninguém aqui ganha à peça!","C"],
+    ["Penso que o problema não está na pedra.","Le problème, c'est pas la pierre, c'est vous.","O problema não é a pedra, é você.","A"],
+    ["A descarga em obra é da vossa responsabilidade.","Débrouillez-vous, je suis pas grutier.","Desenrasquem-se, não sou operador de grua.","C"],
+    ["Precisamos do sinal para avançar com a produção.","Pas d'acompte, pas de chantier.","Sem sinal, não há obra.","N"],
+    ["Tivemos um pequeno contratempo com a chapa.","La tranche est cassée. Fais chier !","A chapa partiu-se. Que chatice! Em versão impublicável.","C"]
+  ]
+}
+];

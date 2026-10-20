@@ -18,6 +18,7 @@ const h = escHtml;
 const pad2 = n => String(n).padStart(2,"0");
 const LESSON_BY_ID = {}; LESSONS.forEach(L=>{ LESSON_BY_ID[L.id]=L; });
 const MOD_BY_ID = {}; MODULES.forEach(M=>{ MOD_BY_ID[M.id]=M; });
+const BONUS_BY_ID = {}; BONUS.forEach(B=>{ BONUS_BY_ID[B.id]=B; });
 const WHO = { A:"Elle", N:"Vous", C:"Lui" };
 const N_ITEMS = Object.keys(ITEM_BY_ID).length, N_TERMS = GLOSSARY.reduce((a,g)=>a+g.items.length,0);
 const fold = t => String(t||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[’']/g," ");
@@ -122,7 +123,7 @@ function brandBlock(){ return `<span class="brand-mark">${BRAND_SVG}</span><span
 let _sid=0;
 function stoneSVG(key, w, h, seed){
   const st=STONES[key]||STONES.carrara, r=seeded(hashStr(key+"#"+(seed||0))), id="sv"+(++_sid), f=v=>v.toFixed(1);
-  const marble = key==="carrara" || key==="quartzite", q = key==="quartzite";
+  const marble = key==="carrara" || key==="quartzite" || key==="nero", q = key==="quartzite", nb = key==="nero";
   if(marble){ h=Math.max(60, Math.round(400*h/w)); w=400; }   // one scale for every size: small swatches show finer stone
   let defs="", body=`<rect width="${w}" height="${h}" fill="${st.base}"/>`;
   const cloud=(freq, color, op)=>{
@@ -141,13 +142,13 @@ function stoneSVG(key, w, h, seed){
   } else {
     // veins: gentle curves across the slab, torn into natural shapes by a displacement map
     const S=Math.max(w,h), ang=(q?-28:-14)+(r()-0.5)*(q?16:20), sn=Math.floor(r()*500);
-    cloud(q?"0.004 0.02":"0.008 0.012", q?[0.42,0.5,0.46]:[0.52,0.55,0.57], q?0.55:0.45);
+    cloud(q?"0.004 0.02":"0.008 0.012", q?[0.42,0.5,0.46]:nb?[0.3,0.32,0.33]:[0.52,0.55,0.57], q?0.55:nb?0.5:0.45);
     let lines="", halo="";
-    for(let i=0;i<(q?7:6);i++){
+    for(let i=0;i<(q?7:nb?8:6);i++){
       const y=h/2+(r()-0.5)*h*1.6, d=`M${f(w/2-S)} ${f(y)} C${f(w/2-S/3)} ${f(y+(r()-0.5)*h*0.6)} ${f(w/2+S/3)} ${f(y+(r()-0.5)*h*0.6)} ${f(w/2+S)} ${f(y+(r()-0.5)*h*0.4)}`;
       const major=i<2, wd=major ? (q?3.5:1.6)+r()*(q?3:1.2) : (q?0.8:0.45)+r()*(q?1.2:0.6);
-      lines+=`<path d="${d}" stroke="${q&&major?"#F5F8F6":st.vein}" stroke-width="${f(wd)}" opacity="${f(major?0.75:0.35+r()*0.3)}"/>`;
-      if(major) halo+=`<path d="${d}" stroke="${q?"#F4F7F5":st.vein}" stroke-width="${f(wd*7)}" opacity="${q?0.35:0.12}"/>`;
+      lines+=`<path d="${d}" stroke="${q&&major?"#F5F8F6":st.vein}" stroke-width="${f(wd)}" opacity="${f(major?(nb?0.92:0.75):(nb?0.45:0.35)+r()*0.3)}"/>`;
+      if(major) halo+=`<path d="${d}" stroke="${q?"#F4F7F5":st.vein}" stroke-width="${f(wd*7)}" opacity="${q?0.35:nb?0.07:0.12}"/>`;
     }
     const disp=sd=>`<feTurbulence type="fractalNoise" baseFrequency="${q?"0.006 0.014":"0.008 0.007"}" numOctaves="3" seed="${sn}" result="n"/><feDisplacementMap in="SourceGraphic" in2="n" scale="${q?60:50}" xChannelSelector="R" yChannelSelector="G" result="d"/><feGaussianBlur in="d" stdDeviation="${sd}"/>`;
     defs+=`<filter id="${id}d" x="-30%" y="-30%" width="160%" height="160%">${disp(0.45)}</filter><filter id="${id}h" x="-30%" y="-30%" width="160%" height="160%">${disp(6)}</filter>`;
@@ -191,6 +192,7 @@ function refText(ref){
   if(p[0]==="i"){ const it=ITEM_BY_ID[p[1]+":"+p[2]]; return it ? { text:it.fr, who:"N" } : null; }
   if(p[0]==="g"){ const g=GLOSSARY[+p[1]], t=g && g.items[+p[2]]; return t ? { text:t[0], who:"A" } : null; }
   if(p[0]==="d"){ const L=LESSON_BY_ID[p[1]], d=L && L.dialogue[+p[2]]; return d ? { text:d[1], who:d[0] } : null; }
+  if(p[0]==="b"){ const B=BONUS_BY_ID[p[1]], t=B && B.items[+p[2]]; return t ? { text:t[1], who:t[3]||"C" } : null; }
   return null;
 }
 const Tap = {
@@ -388,7 +390,28 @@ function viewLicoes(){
     const ls=LESSONS.filter(L=>L.m===M.id);
     return `<section class="mod"><div class="mod-banner ${M.stone==="granit"?"dark":""}">${stoneSVG(M.stone, 760, 150, M.n*7)}<div class="mb-txt"><span class="mb-num">Module ${M.n}</span><span class="mb-fr" lang="fr">${h(M.fr)}</span><span class="mb-pt">${h(M.pt)} · ${h(M.blurb)}</span></div></div>
       <div class="lrows">${ls.map(L=>{ const [lab,cls]=lessonStatus(L,nx); return `<button class="lrow" data-act="lesson" data-id="${L.id}"><span class="lnum">${pad2(L.n)}</span><span class="ltxt"><b lang="fr">${frHtml(L.fr)}</b><small>${h(L.pt)}</small></span>${lab?`<span class="lstat ${cls}">${cls==="done"?ic("check"):""}${h(lab)}</span>`:"<span></span>"}${ic("chevR","chev")}</button>`; }).join("")}</div></section>`;
-  }).join("")}`;
+  }).join("")}
+  ${bonusSection()}`;
+}
+
+/* ---------- Bonus · Sans filtre (for laughs: the polite phrase, then what a grumpy Frenchman really says) ---------- */
+const bonusRuns = id => S.prog.history.filter(e=>e.k==="bonus" && e.id===id).length;
+function bonusScript(B){ return buildBonus(B, { pause:S.settings.pause, rate:S.settings.rate, narrator:narratorVoiceOn(), seed:today() }); }
+function bonusSection(){
+  return `<section class="mod bonus"><div class="mod-banner dark">${stoneSVG("nero", 760, 150, 9)}<div class="mb-txt"><span class="mb-num">Bonus</span><span class="mb-fr" lang="fr">Sans filtre</span><span class="mb-pt">O francês sem papas na língua · para rir, não para usar com clientes</span></div></div>
+    <div class="lrows">${BONUS.map(B=>{ const n=bonusRuns(B.id); return `<button class="lrow" data-act="bonus" data-id="${B.id}"><span class="lnum">R${B.n}</span><span class="ltxt"><b lang="fr">${frHtml(B.fr)}</b><small>${h(B.pt)} · ${B.items.length} frases</small></span>${n?`<span class="lstat done">${ic("check")}Feita${n>1?` ${n}×`:""}</span>`:"<span></span>"}${ic("chevR","chev")}</button>`; }).join("")}</div></section>`;
+}
+function openBonus(id){
+  const B=BONUS_BY_ID[id]; if(!B) return;
+  const sc=bonusScript(B), n=bonusRuns(B.id);
+  Sheet.open(`Sans filtre · ronde ${B.n}`, `
+    <div class="ls-head dark">${stoneSVG(B.stone, 640, 140, B.n+60)}<div class="ls-ht"><span class="mb-num">Bonus · <span lang="fr">Sans filtre</span></span><h3 class="fr-title" lang="fr">${frHtml(B.fr)}</h3><span class="mb-pt">${h(B.pt)}</span></div></div>
+    <p class="ls-sit">${ptHtml(B.intro)}</p>
+    ${cote(`${Math.max(1,Math.round(sc.total/60))} min · ${sc.spoken} respostas em voz alta`)}
+    <div class="ls-actions"><button class="btn primary" data-act="play-bonus" data-id="${B.id}">${ic("play","fill")} ${n?"Fazer outra vez":"Começar a ronda"}</button></div>
+    <details class="grp bn-list"><summary><span class="ltxt"><b lang="fr">Les phrases</b><small>${B.items.length} frases · espreitar antes estraga a piada</small></span>${ic("chevR","chev")}</summary>
+      <div class="flist">${B.items.map(([pol,rude,lit],k)=>`<div class="frow" data-row><div class="ftx"><p class="fr" lang="fr">${frHtml(rude)}</p><p class="pt">${h(lit)}</p><p class="bn-pol">Em vez de: ${h(pol)}</p></div><div class="pbtns"><button class="pbtn" data-act="say" data-ref="b:${B.id}:${k}" aria-label="Ouvir">${ic("volume")}</button></div></div>`).join("")}</div>
+    </details>`, { kind:"bonus" });
 }
 function phraseRow(it){
   const sr=S.prog.srs[it.id], ref="i:"+it.id;
@@ -501,6 +524,7 @@ function historyList(){
     if(e.k==="dialogue" && L) return `Diálogo da lição ${pad2(L.n)}`;
     if(e.k==="review") return `Revisão · ${e.n} ${e.n===1?"frase":"frases"}${e.ok!=null?`, ${e.ok} sabidas`:""}`;
     if(e.k==="practice") return `Treino livre · ${e.n} frases`;
+    if(e.k==="bonus" && BONUS_BY_ID[e.id]) return `<span lang="fr">Sans filtre</span> · ronda ${BONUS_BY_ID[e.id].n}`;
     return "Prática"; };
   return `<section class="card"><div class="sec-head"><h2 class="sec-title">Histórico</h2></div><ul class="hist">${list.map(e=>`<li><span class="h-d">${h(relDayShort(dayKey(e.d)))}</span><span class="h-t">${label(e)}</span><span class="h-m">${h(fmtDur(e.sec||0))}</span></li>`).join("")}</ul></section>`;
 }
@@ -539,13 +563,13 @@ const P = {
     if(R.open) R.close(true);
     if(Sheet.isOpen) Sheet.close(true);
     Tap.stop(); Voice.stop();
-    this.mode=o.dialogue?"dialogue":"lesson"; this.L=L; this.finished=false; this.fails=0;
-    const res=!o.dialogue && !o.restart && S.prog.resume && S.prog.resume.id===L.id ? S.prog.resume : null;
+    this.mode=o.bonus?"bonus":o.dialogue?"dialogue":"lesson"; this.L=L; this.finished=false; this.fails=0;
+    const res=this.mode==="lesson" && !o.restart && S.prog.resume && S.prog.resume.id===L.id ? S.prog.resume : null;
     if(o.restart && S.prog.resume && S.prog.resume.id===L.id){ S.prog.resume=null; saveProg(); }
     this.seed=(res && res.seed) || today();
-    const prev = o.dialogue ? [] : (res && Array.isArray(res.prev) ? res.prev.map(id=>ITEM_BY_ID[id]).filter(Boolean) : prevForLesson(L, S.prog.srs, today(), this.seed));
+    const prev = this.mode!=="lesson" ? [] : (res && Array.isArray(res.prev) ? res.prev.map(id=>ITEM_BY_ID[id]).filter(Boolean) : prevForLesson(L, S.prog.srs, today(), this.seed));
     this.prevIds=prev.map(p=>p.id);
-    this.sc = o.dialogue ? buildDialogue(L, this.ctx(L,[])) : buildLesson(L, this.ctx(L, prev));
+    this.sc = this.mode==="bonus" ? buildBonus(L, this.ctx(L,[])) : o.dialogue ? buildDialogue(L, this.ctx(L,[])) : buildLesson(L, this.ctx(L, prev));
     this.i = res ? clamp(res.i|0, 0, this.sc.steps.length-1) : 0;
     this.curU=null; this.lastFr=null; this.card=null; this.active=0; this.flushed=0; this.pausedAt=0; this.playing=false;
     Ov.show("player", this.html());
@@ -554,24 +578,24 @@ const P = {
     this.play();
   },
   rebuild(){
-    if(!this.sc || this.mode!=="lesson") { if(this.sc && this.mode==="dialogue") this.sc=buildDialogue(this.L, this.ctx(this.L,[])); this.paintProgress(); return; }
+    if(!this.sc || this.mode!=="lesson") { if(this.sc && this.mode==="dialogue") this.sc=buildDialogue(this.L, this.ctx(this.L,[])); if(this.sc && this.mode==="bonus") this.sc=buildBonus(this.L, this.ctx(this.L,[])); this.paintProgress(); return; }
     const prev=this.prevIds.map(id=>ITEM_BY_ID[id]).filter(Boolean);
     this.sc=buildLesson(this.L, this.ctx(this.L, prev));
     this.paintProgress();
   },
   html(){
-    const L=this.L, M=MOD_BY_ID[L.m], lesson=this.mode==="lesson";
-    return `<div class="pl" role="dialog" aria-modal="true" aria-label="Lição ${L.n}">
+    const L=this.L, bonus=this.mode==="bonus", stone=bonus ? L.stone : MOD_BY_ID[L.m].stone, lesson=this.mode==="lesson";
+    return `<div class="pl${bonus?" pl-bonus":""}" role="dialog" aria-modal="true" aria-label="${bonus?`Sans filtre, ronda ${L.n}`:`Lição ${L.n}`}">
       <header class="pl-top">
         <button class="icon-btn" data-act="pl-close" aria-label="Fechar">${ic("x")}</button>
-        <div class="pl-title"><span>${lesson?`Leçon ${pad2(L.n)}`:`Dialogue · leçon ${pad2(L.n)}`}</span><b lang="fr">${frHtml(L.fr)}</b></div>
+        <div class="pl-title"><span>${bonus?`Sans filtre · ronde ${L.n}`:lesson?`Leçon ${pad2(L.n)}`:`Dialogue · leçon ${pad2(L.n)}`}</span><b lang="fr">${frHtml(L.fr)}</b></div>
         <button class="icon-btn" data-act="pl-pop" aria-label="Ritmo e texto" aria-expanded="false">${ic("sliders")}</button>
       </header>
       <div class="pl-pop" id="pl-pop" hidden>${this.popHtml()}</div>
       <div class="pl-prog"><div class="pl-track"><i id="pl-fill"></i></div><span id="pl-left"></span></div>
       ${lesson?`<ol class="pl-phases" id="pl-phases">${this.sc.phases.map(p=>{ const x=PHASES.find(y=>y.id===p); return `<li data-p="${p}"><span lang="fr">${x.fr}</span></li>`; }).join("")}</ol>`:""}
       <div class="pl-stage" id="pl-stage">
-        ${dialHtml(M.stone, L.n)}
+        ${dialHtml(stone, L.n)}
         <p class="pl-cue" id="pl-cue" aria-live="polite"></p>
         <div class="pl-card" id="pl-card"></div>
         <p class="pl-warn" id="pl-warn" hidden></p>
@@ -709,7 +733,7 @@ const P = {
       srsAddLesson(S.prog.srs, L, t);
       if(S.prog.resume && S.prog.resume.id===L.id) S.prog.resume=null;
     }
-    addHistory({ d:Date.now(), k:this.mode==="lesson"?"lesson":"dialogue", id:L.id, sec:Math.round(this.active/1000) });
+    addHistory({ d:Date.now(), k:this.mode, id:L.id, sec:Math.round(this.active/1000) });
     saveProg(); buzz(30);
     this.paintDone();
   },
@@ -775,6 +799,8 @@ const P = {
     else if(c.kind==="line"){
       html=`<div class="pc-dlg" id="pc-dlg">${L.dialogue.slice(0,c.j+1).map((d,k)=>`<div class="dl${k===c.j?" on":""}">${whoChip(d[0])}<div class="dl-t"><p class="fr" lang="fr">${sf?frHtml(d[1]):`<span class="audio-only">${ic("ear")} só áudio</span>`}</p>${S.settings.showPt?`<p class="pt">${ptHtml(d[2])}</p>`:""}</div></div>`).join("")}</div>`;
     }
+    else if(c.kind==="btitle") html=`<p class="pc-label">Bonus · <span lang="fr">Sans filtre</span></p><h2 class="pc-title" lang="fr">${frHtml(L.fr)}</h2><p class="pc-sub">${h(L.pt)}</p>`;
+    else if(c.kind==="joke") html=`<p class="pc-label">${h(c.label)}</p><p class="pc-pt">${ptHtml(c.pt)}</p>${frLine(c.fr, this.revealed)}${this.revealed?`<p class="pc-lit">“${h(c.lit)}”</p>`:""}`;
     else if(c.kind==="role") html=`<div class="pc-cue">${whoChip(c.who)}<p lang="fr">${sf?frHtml(c.cue):`<span class="audio-only">${ic("ear")} só áudio</span>`}</p></div><p class="pc-label">Responde</p><p class="pc-pt">${ptHtml(c.task)}</p>${frLine(c.fr, this.revealed)}`;
     else html=`<p class="pc-label">${h(c.label)}</p><p class="pc-pt">${ptHtml(c.pt)}</p>${frLine(this.part||c.fr, this.revealed||!!this.part)}`;
     el.innerHTML=html; el.dataset.kind=c.kind;
@@ -785,6 +811,14 @@ const P = {
     $("#pl-fill").style.width="100%"; $("#pl-left").textContent="";
     $$("#pl-phases li").forEach(li=>{ li.classList.remove("on"); li.classList.add("past"); });
     const mins=Math.max(1, Math.round(this.active/60000));
+    if(this.mode==="bonus"){
+      const nx=BONUS.find(B=>B.n===L.n+1);
+      stage.innerHTML=`<div class="pl-done"><div class="medal">${stoneSVG(L.stone, 160, 160, L.n)}<span>${ic("check")}</span></div><p class="eyebrow" lang="fr">Sans filtre · ronde ${L.n}</p><h2 class="fr-title" lang="fr">${frHtml(L.fr)}</h2>
+        <ul class="facts center"><li><b>${mins}</b><span>${mins===1?"minuto":"minutos"}</span></li><li><b>${L.items.length}</b><span>frases sem filtro</span></li><li><b>${this.sc.spoken}</b><span>respostas em voz alta</span></li></ul>
+        <p class="muted">${ptHtml("Já sabes o que eles dizem quando estão mal-dispostos. Com clientes, continua no «vous» e no sorriso.")}</p></div>`;
+      ctl.innerHTML=`<div class="done-actions"><button class="btn ghost" data-act="pl-close">Fechar</button>${nx?`<button class="btn primary" data-act="play-bonus" data-id="${nx.id}">Ronda ${nx.n} ${ic("chevR")}</button>`:`<button class="btn primary" data-act="play-bonus" data-id="${L.id}">${ic("repeat")} Outra vez</button>`}</div>`;
+      return;
+    }
     if(this.mode==="dialogue"){
       stage.innerHTML=`<div class="pl-done"><div class="medal">${stoneSVG(M.stone, 160, 160, L.n)}<span>${ic("check")}</span></div><p class="eyebrow" lang="fr">Dialogue écouté</p><h2 class="fr-title" lang="fr">${frHtml(L.fr)}</h2><p class="muted">Ouve-o mais vezes até perceberes tudo sem ler.</p></div>`;
       ctl.innerHTML=`<div class="done-actions"><button class="btn ghost" data-act="pl-close">Fechar</button><button class="btn primary" data-act="play-dialogue" data-id="${L.id}">${ic("repeat")} Ouvir outra vez</button></div>`;
@@ -1136,6 +1170,8 @@ document.addEventListener("click", async e=>{
     case "settings": openSettings(); break;
     case "sheet-close": Sheet.close(); break;
     case "lesson": openLesson(id); break;
+    case "bonus": openBonus(id); break;
+    case "play-bonus": { const B=BONUS_BY_ID[id]; if(B) P.open(B, { bonus:true }); break; }
     case "play-lesson": { const L=LESSON_BY_ID[id]; if(L) P.open(L); break; }
     case "restart-lesson": { const L=LESSON_BY_ID[id]; if(L) P.open(L, { restart:true }); break; }
     case "play-dialogue": { const L=LESSON_BY_ID[id]; if(L) P.open(L, { dialogue:true }); break; }
