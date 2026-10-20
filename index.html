@@ -578,6 +578,7 @@ body.typing .tabbar{ display:none; }
 .ro-bubble blockquote{ margin:0; font:italic 400 19.5px/1.32 var(--f-fr); text-wrap:pretty; }
 .ro-bubble figcaption{ margin-top:6px; font:500 13px/1.45 var(--f-ui); color:#A6AFB2; text-wrap:pretty; }
 .ro-bubble .q-fr{ color:#9FD5CB; }
+.ro-bubble .ro-pt{ font:650 .84em/1.3 var(--f-ui); font-style:normal; letter-spacing:-.005em; color:#F4A28B; }
 .ro-say.mini{ margin:0 auto 18px; }
 .ro-say.mini blockquote{ font-size:17px; }
 /* what you said against what was expected */
@@ -1407,127 +1408,135 @@ const STONES = {
 };
 
 /* Bonus · Sans pitié: Madame Colette asks how to say a phrase from the course, you answer at the microphone,
-   and she comments on every mistake. For laughs. A line is [fr, pt, only?]: only "s" = spoken answers, "t" = typed.
-   Slots: {miss} a word left out · {want}/{got} the word expected and the one said · {extra} a word added            */
+   and she insults every mistake, half in French, half in Portuguese. Explicit language, for laughs.
+   Text in [brackets] is Portuguese (shown in its own colour; she says the whole line with her French accent).
+   A line is [line, full translation, only?]: only "s" = spoken answers, "t" = typed.
+   Slots: {miss} a word left out · {want}/{got} the word expected and the one said · {extra} a word added       */
 const COLETTE = {
-  intro:["Bonjour. Je suis Madame Colette. Quarante ans d'enseignement, zéro patience. Montre-moi ce que tu sais faire.",
-         "Bom dia. Sou a Madame Colette. Quarenta anos a ensinar, zero paciência. Mostra-me o que sabes fazer."],
+  intro:["[Olá, meu anjinho.] Je suis Madame Colette. Quarante ans à écouter des [burros como tu] massacrer ma langue. [Bora lá, surpreende-me, otário.]",
+         "Olá, meu anjinho. Sou a Madame Colette. Quarenta anos a ouvir burros como tu a massacrar a minha língua. Bora lá, surpreende-me, otário."],
   hello:[
-    ["Encore toi ? Bon. Essaie de ne pas me décevoir.","Outra vez tu? Pronto. Tenta não me desiludir."],
-    ["Allez. Dix phrases. Ne me fais pas regretter d'être venue.","Vamos. Dez frases. Não me faças arrepender de ter vindo."],
-    ["Te revoilà. Par courage, ou par inconscience ?","Estás de volta. Por coragem ou por inconsciência?"],
-    ["J'ai pris un café bien serré. Je suis prête à souffrir.","Bebi um café bem forte. Estou pronta para sofrer."]
+    ["Encore toi ? [Foda-se, pensava que tinhas desistido.] Allez, viens te faire humilier.","Outra vez tu? Foda-se, pensava que tinhas desistido. Anda, vem ser humilhado."],
+    ["[Olha quem voltou:] le roi des cons. [Senta-te e não me faças vomitar.]","Olha quem voltou: o rei dos idiotas. Senta-te e não me faças vomitar."],
+    ["J'ai bu trois cafés et un cognac [para aguentar a tua pronúncia de merda.]","Bebi três cafés e um conhaque para aguentar a tua pronúncia de merda."],
+    ["[Bom dia, cepo.] On y va, et essaie de ne pas me faire pleurer [de vergonha alheia.]","Bom dia, cepo. Vamos lá, e tenta não me fazer chorar de vergonha alheia."]
   ],
-  mid:["La moitié. Courage. Pour moi, surtout.","A meio. Coragem. Sobretudo para mim."],
-  last:["Dernière phrase. Ne gâche pas tout maintenant.","Última frase. Não estragues tudo agora."],
+  mid:["La moitié, putain. [Ainda faltam cinco e eu já quero emigrar.]","A meio, porra. Ainda faltam cinco e eu já quero emigrar."],
+  last:["Dernière phrase. [Se estragares esta,] je te renvoie au Portugal [numa palete de mármore partido.]","Última frase. Se estragares esta, mando-te de volta para Portugal numa palete de mármore partido."],
   lines:{
     silence:[
-      ["Allô ? Il y a quelqu'un ?","Está? Está aí alguém?","s"],
-      ["Même ton silence a un accent.","Até o teu silêncio tem sotaque.","s"],
-      ["Tu as perdu ta langue ? Cherche-la, j'attends.","Perdeste a língua? Procura-a, eu espero."],
-      ["Rien ? Pas un mot ? Un bloc de granit est plus bavard que toi.","Nada? Nem uma palavra? Um bloco de granito fala mais do que tu."],
-      ["Le silence est d'or. Mais là, c'est juste de la paresse.","O silêncio é de ouro. Mas aqui é só preguiça."],
-      ["Une réponse vide. C'est audacieux.","Uma resposta vazia. É ousado.","t"],
-      ["Tu écris à l'encre invisible ?","Escreves com tinta invisível?","t"]
+      ["[Estás a dormir, caralho?] Réveille-toi, espèce de larve !","Estás a dormir, caralho? Acorda, sua lesma!"],
+      ["Allô ? [Está aí alguém,] ou je parle à un bloc de granit ?","Está? Está aí alguém, ou estou a falar com um bloco de granito?","s"],
+      ["Même ton silence a un accent [de labrego.]","Até o teu silêncio tem sotaque de labrego.","s"],
+      ["[Agora é que te calas?] Toute la journée tu l'ouvres, et là, rien. [Palhaço.]","Agora é que te calas? O dia todo a abrir a boca, e agora nada. Palhaço.","s"],
+      ["Le silence est d'or, [mas o teu é de lata, otário.]","O silêncio é de ouro, mas o teu é de lata, otário."],
+      ["Une réponse vide. [Foda-se, nem para escrever serves.]","Uma resposta vazia. Foda-se, nem para escrever serves.","t"],
+      ["Tu écris à l'encre invisible, [ó génio?]","Escreves com tinta invisível, ó génio?","t"]
     ],
     perfect:[
-      ["Parfait. Ça m'énerve.","Perfeito. Irrita-me."],
-      ["Hmm. Tu as triché ?","Hmm. Fizeste batota?"],
-      ["Bien. Ne prends pas la grosse tête : elle est déjà assez grosse.","Bem. Não fiques com a mania: a cabeça já é grande que chegue."],
-      ["Correct. Je n'ai rien à dire, et je déteste ne rien avoir à dire.","Correto. Não tenho nada a dizer, e detesto não ter nada a dizer."],
-      ["Impeccable. Un vrai poli miroir. Ne t'habitue pas.","Impecável. Um verdadeiro polido espelho. Não te habitues."],
-      ["Bon. Même un Parisien n'y trouverait rien à redire.","Pronto. Nem um parisiense teria nada a apontar."],
-      ["Bravo. C'est presque suspect.","Bravo. Até é suspeito."]
+      ["Parfait. [Ainda bem, porque] j'avais déjà sorti [a régua.]","Perfeito. Ainda bem, porque já tinha ido buscar a régua."],
+      ["[Hmm. Fizeste batota,] petit con ?","Hmm. Fizeste batota, idiotazinho?"],
+      ["Même une horloge arrêtée donne l'heure juste deux fois par jour. [Não te armes em bom.]","Até um relógio parado acerta duas vezes por dia. Não te armes em bom."],
+      ["Correct, putain. [Agora não tenho nada para te insultar,] et ça me fout en rogne.","Correto, porra. Agora não tenho nada para te insultar, e isso põe-me fula."],
+      ["Impeccable. [Um polido espelho.] Profite, [que não se vai repetir, cepo.]","Impecável. Um polido espelho. Aproveita, que não se vai repetir, cepo."],
+      ["Bravo. C'est presque suspect. [Copiaste de quem, malandro?]","Bravo. Até é suspeito. Copiaste de quem, malandro?"],
+      ["[Ok, essa estava certa.] Ne prends pas la grosse tête, [que já não cabe na porta.]","Ok, essa estava certa. Não fiques com a mania, que a cabeça já não cabe na porta."]
     ],
     good:[
-      ["Pas mal. Pour quelqu'un qui débute.","Nada mau. Para quem está a começar."],
-      ["C'est correct. Correct, pas brillant.","Está correto. Correto, não brilhante."],
-      ["Presque. Comme un joint de cinq millimètres : ça se voit quand même.","Quase. Como uma junta de cinco milímetros: nota-se na mesma."],
-      ["On y est presque. Mais « presque », ça ne paie pas les factures.","Quase lá. Mas “quase” não paga as faturas."],
-      ["Bien… si on ferme les yeux. Et les oreilles.","Bem… se fecharmos os olhos. E os ouvidos.","s"],
-      ["Acceptable. Je ne saute pas de joie : j'ai mal au dos.","Aceitável. Não salto de alegria: tenho dores nas costas."]
+      ["Pas mal. [Para um burro.]","Nada mau. Para um burro."],
+      ["Presque, [caralho.] Comme un joint de cinq millimètres : [nota-se ao longe.]","Quase, caralho. Como uma junta de cinco milímetros: nota-se ao longe."],
+      ["[Quase lá.] Mais « presque », ça paie pas les factures, [ó artista.]","Quase lá. Mas “quase” não paga as faturas, ó artista."],
+      ["C'est passable. [Como cerâmico imitação mármore:] de loin, ça passe ; [de perto, é uma merda.]","É passável. Como cerâmico imitação mármore: ao longe passa; de perto, é uma merda."],
+      ["Bien… [se eu fechar os olhos,] les oreilles et le nez.","Bem… se eu fechar os olhos, os ouvidos e o nariz.","s"],
+      ["Acceptable. [Não salto de alegria porque] j'ai mal au dos [de tanto te carregar.]","Aceitável. Não salto de alegria porque tenho dores nas costas de tanto te carregar."]
     ],
     near:[
-      ["« {got} » ? C'est « {want} ». Un son de travers, et tout s'effondre.","«{got}»? É «{want}». Um som torto, e vai tudo abaixo.","s"],
-      ["« {got} »… presque « {want} ». Mais presque, c'est comme une tranche fissurée : ça ne se vend pas.","«{got}»… quase «{want}». Mas quase é como uma chapa rachada: não se vende."],
-      ["« {got} » au lieu de « {want} ». Ton accent vient de faire une victime.","«{got}» em vez de «{want}». O teu sotaque acabou de fazer uma vítima.","s"],
-      ["C'est « {want} ». Dans ta bouche, ça devient « {got} ». Impressionnant.","É «{want}». Na tua boca, vira «{got}». Impressionante.","s"],
-      ["« {want} », pas « {got} ». Articule : tu n'as pas un sac de ciment dans la bouche.","«{want}», não «{got}». Articula: não tens um saco de cimento na boca.","s"],
-      ["« {got} » ? Ça s'écrit « {want} ». Ton clavier est en grève ?","«{got}»? Escreve-se «{want}». O teu teclado está em greve?","t"],
-      ["« {got} », « {want} »… pour toi, c'est pareil. Pour moi, non.","«{got}», «{want}»… para ti é igual. Para mim, não."]
+      ["« {got} » ? [Que merda é essa?] C'est « {want} ». [Abre a boca, caralho!]","«{got}»? Que merda é essa? É «{want}». Abre a boca, caralho!","s"],
+      ["« {got} »… [quase] « {want} ». Mais presque, c'est comme une tranche fissurée : [vai direitinha para o lixo.]","«{got}»… quase «{want}». Mas quase é como uma chapa rachada: vai direitinha para o lixo."],
+      ["« {got} » au lieu de « {want} ». Ton accent vient de tuer quelqu'un, [assassino.]","«{got}» em vez de «{want}». O teu sotaque acabou de matar alguém, assassino.","s"],
+      ["C'est « {want} ». [Na tua boca de sapo,] ça devient « {got} ». Félicitations, connard.","É «{want}». Na tua boca de sapo, vira «{got}». Parabéns, cabrão.","s"],
+      ["« {want} », pas « {got} ». Articule, [não tens um saco de cimento na boca,] bordel !","«{want}», não «{got}». Articula, não tens um saco de cimento na boca, porra!","s"],
+      ["« {got} » ? Ça s'écrit « {want} ». [O teu teclado também é burro,] ou c'est juste toi ?","«{got}»? Escreve-se «{want}». O teu teclado também é burro, ou és só tu?","t"],
+      ["« {got} », « {want} »… [para ti é igual.] Comme un crétin et toi. [Ah, espera…]","«{got}», «{want}»… para ti é igual. Como um cretino e tu. Ah, espera…"]
     ],
     sub:[
-      ["« {got} » ? Il n'y a pas de « {got} » dans cette phrase. Tu inventes, maintenant ?","«{got}»? Não há «{got}» nesta frase. Agora inventas?"],
-      ["J'attendais « {want} », j'ai eu « {got} ». Comme commander du marbre et recevoir du carrelage.","Esperava «{want}», recebi «{got}». Como encomendar mármore e receber cerâmico."],
-      ["« {got} » à la place de « {want} ». Molière vient de se retourner dans sa tombe.","«{got}» no lugar de «{want}». O Molière acabou de dar uma volta no túmulo."],
-      ["« {got} » ? Ce mot n'a rien à faire là. Comme toi dans une réunion d'architectes.","«{got}»? Esta palavra não tem nada a ver com isto. Como tu numa reunião de arquitetos."],
-      ["« {got} » ? Tu parles français, ou tu lis la notice d'un meuble suédois ?","«{got}»? Falas francês, ou estás a ler as instruções de um móvel sueco?"]
+      ["« {got} » ? [Inventaste essa palavra agora,] espèce d'abruti ?","«{got}»? Inventaste essa palavra agora, seu imbecil?"],
+      ["J'attendais « {want} », j'ai eu « {got} ». [É como encomendar Calacatta e receber] du carrelage de supermarché, putain.","Esperava «{want}», recebi «{got}». É como encomendar Calacatta e receber azulejo de supermercado, porra."],
+      ["« {got} » à la place de « {want} ». [O Molière levantou-se do túmulo] pour te gifler.","«{got}» no lugar de «{want}». O Molière levantou-se do túmulo para te dar um estalo."],
+      ["« {got} » ? Ce mot n'a rien à foutre là. [Tal como tu numa reunião de arquitetos.]","«{got}»? Esta palavra não tem nada que fazer aqui. Tal como tu numa reunião de arquitetos."],
+      ["« {got} » ? Tu parles français, [ou estás a montar um móvel sueco às cegas,] tête de con ?","«{got}»? Falas francês, ou estás a montar um móvel sueco às cegas, cara de parvo?"]
     ],
     miss:[
-      ["Il manque « {miss} ». Tu l'as vendu au marché noir ?","Falta «{miss}». Vendeste-o no mercado negro?"],
-      ["Où est passé « {miss} » ? Il est parti en vacances sans toi ?","Onde foi parar o «{miss}»? Foi de férias sem ti?"],
-      ["Tu as mangé « {miss} ». J'espère qu'il était bon.","Comeste o «{miss}». Espero que estivesse bom."],
-      ["Ta phrase a plus de trous qu'un travertin non rebouché. Il manque « {miss} ».","A tua frase tem mais buracos que um travertino por betumar. Falta «{miss}»."],
-      ["Il manque « {miss} ». Le client ne paiera pas une phrase incomplète.","Falta «{miss}». O cliente não paga uma frase incompleta."],
-      ["Une phrase, c'est comme un plan de travail : s'il manque un morceau, ça se voit. Ici, « {miss} ».","Uma frase é como uma bancada: se falta um bocado, nota-se. Aqui, «{miss}»."]
+      ["Il manque « {miss} », [seu cabrão.] Tu l'as vendu au marché noir ?","Falta «{miss}», seu cabrão. Vendeste-o no mercado negro?"],
+      ["Où est passé « {miss} » ? [Comeste-o,] espèce de goinfre ?","Onde foi parar o «{miss}»? Comeste-o, seu lambão?"],
+      ["Ta phrase a plus de trous qu'un travertin [por betumar,] connard. Il manque « {miss} ».","A tua frase tem mais buracos que um travertino por betumar, cabrão. Falta «{miss}»."],
+      ["Il manque « {miss} ». [O cliente não paga] une demi-phrase, [e eu não aturo] un demi-cerveau.","Falta «{miss}». O cliente não paga meia frase, e eu não aturo meio cérebro."],
+      ["[Uma frase é como uma bancada:] s'il manque un morceau, c'est de la merde. [Aqui falta] « {miss} ».","Uma frase é como uma bancada: se falta um bocado, é uma merda. Aqui falta «{miss}»."],
+      ["« {miss} », [caralho!] C'était si difficile, [ó cabeça de alho chocho?]","«{miss}», caralho! Era assim tão difícil, ó cabeça de alho chocho?"]
     ],
     extra:[
-      ["« {extra} » ? Personne ne t'a demandé « {extra} ».","«{extra}»? Ninguém te pediu «{extra}»."],
-      ["Tu as ajouté « {extra} ». Tu factures au mot, c'est ça ?","Acrescentaste «{extra}». Cobras à palavra, é isso?"],
-      ["Trop de mots. On dirait un devis plein d'options cachées.","Palavras a mais. Parece um orçamento cheio de extras escondidos."]
+      ["« {extra} » ? [Quem é que te pediu] « {extra} », bouffon ?","«{extra}»? Quem é que te pediu «{extra}», palhaço?"],
+      ["Tu as ajouté « {extra} ». [Cobras à palavra,] espèce d'escroc ?","Acrescentaste «{extra}». Cobras à palavra, seu vigarista?"],
+      ["Trop de mots, [porra.] On dirait un devis plein d'options cachées [feito por um aldrabão.]","Palavras a mais, porra. Parece um orçamento cheio de extras escondidos feito por um aldrabão."]
     ],
     bad:[
-      ["C'était quoi, ça ? Du français ? Du portugais ? Un camion qui recule ?","O que foi isso? Francês? Português? Um camião a fazer marcha-atrás?","s"],
-      ["J'ai compris un mot sur dix. Et je suis généreuse.","Percebi uma palavra em cada dez. E estou a ser generosa."],
-      ["Molière pleure. Et moi aussi, un peu.","O Molière está a chorar. E eu também, um bocadinho."],
-      ["Tu tailles le français comme du granit : à la masse.","Talhas o francês como granito: à marreta."],
-      ["Ta phrase est arrivée comme une tranche mal emballée : en mille morceaux.","A tua frase chegou como uma chapa mal embalada: em mil bocados."],
-      ["Si tu parles comme ça au client, il achète du carrelage.","Se falas assim com o cliente, ele compra cerâmico.","s"],
-      ["Non. Juste non.","Não. Simplesmente não."],
-      ["Même un traducteur automatique aurait honte.","Até um tradutor automático tinha vergonha."],
-      ["Tu écris comme tu parles : mal.","Escreves como falas: mal.","t"],
-      ["Si tu écris comme ça au client, il achète du carrelage.","Se escreves assim ao cliente, ele compra cerâmico.","t"]
+      ["C'était quoi, cette merde ? [Francês? Português? Um camião a fazer marcha-atrás?]","O que foi esta merda? Francês? Português? Um camião a fazer marcha-atrás?","s"],
+      ["J'ai compris un mot sur dix, [e estou a ser generosa,] pauvre con.","Percebi uma palavra em cada dez, e estou a ser generosa, pobre idiota."],
+      ["Putain de bordel de merde ! [Até o Molière se mijou no caixão.]","Puta que pariu! Até o Molière se mijou no caixão."],
+      ["[Talhas o francês como granito:] à la masse, [como um bruto sem cérebro.]","Talhas o francês como granito: à marreta, como um bruto sem cérebro."],
+      ["Ta phrase est arrivée comme une tranche mal emballée : [em mil bocados, e a culpa é toda tua, nabo.]","A tua frase chegou como uma chapa mal embalada: em mil bocados, e a culpa é toda tua, nabo."],
+      ["Si tu parles comme ça au client, [ele compra cerâmico,] et il a raison, [caralho.]","Se falas assim com o cliente, ele compra cerâmico, e com razão, caralho.","s"],
+      ["Non. [Simplesmente não.] Va te faire foutre.","Não. Simplesmente não. Vai-te foder."],
+      ["Même un traducteur automatique aurait honte, [e aquilo nem tem sentimentos, cepo.]","Até um tradutor automático tinha vergonha, e aquilo nem tem sentimentos, cepo."],
+      ["[Ó meu Deus.] Ton français, c'est un camion de marbre sans freins : [só faz estragos.]","Ó meu Deus. O teu francês é um camião de mármore sem travões: só faz estragos."],
+      ["Tu écris comme tu parles : [como o cu.]","Escreves como falas: como o cu.","t"],
+      ["Si tu écris comme ça au client, [ele compra cerâmico e ainda te manda à merda.]","Se escreves assim ao cliente, ele compra cerâmico e ainda te manda à merda.","t"]
     ],
     better:[
-      ["Ah ! Tu vois, quand tu fais un effort ?","Ah! Vês, quando te esforças?"],
-      ["Mieux. Ce n'était pas difficile, mais bon.","Melhor. Não era difícil, mas pronto."],
-      ["Voilà. Il suffisait de m'écouter. Comme toujours.","Pronto. Bastava ouvires-me. Como sempre."],
-      ["Enfin. J'ai vieilli de trois ans pendant cette phrase.","Finalmente. Envelheci três anos com esta frase."]
+      ["Ah ! [Vês, quando paras de ser preguiçoso?] Connard, va.","Ah! Vês, quando paras de ser preguiçoso? Sacana."],
+      ["Mieux. [Também não era difícil fazer melhor do que aquela merda,] mais bon.","Melhor. Também não era difícil fazer melhor do que aquela merda, mas pronto."],
+      ["Voilà. [Bastava ouvires-me,] tête de mule.","Pronto. Bastava ouvires-me, cabeça dura."],
+      ["Enfin, putain. [Envelheci dez anos com esta frase.]","Finalmente, porra. Envelheci dez anos com esta frase."]
     ],
     worse:[
-      ["Tu as réussi à faire pire. C'est un talent.","Conseguiste fazer pior. É um talento."],
-      ["Plus tu essaies, pire c'est.","Quanto mais tentas, pior fica."],
-      ["Pire qu'avant. Je ne savais pas que c'était possible.","Pior do que antes. Não sabia que era possível."]
+      ["[Conseguiste fazer pior.] Chapeau, l'artiste. [É um dom, filho.]","Conseguiste fazer pior. Tiro-te o chapéu, artista. É um dom, filho."],
+      ["Plus tu essaies, pire c'est. [Pára de tentar,] tu me donnes la nausée.","Quanto mais tentas, pior fica. Pára de tentar, dás-me náuseas."],
+      ["Pire qu'avant ?! [Não sabia que era possível,] espèce de catastrophe ambulante.","Pior do que antes?! Não sabia que era possível, seu desastre ambulante."]
     ],
     again:[
-      ["Encore ? Tu le fais exprès ?","Outra vez? Fazes de propósito?"],
-      ["Même erreur, même accent. Au moins, c'est constant.","Mesmo erro, mesmo sotaque. Ao menos é consistente.","s"],
-      ["Je répète, tu répètes, et rien ne change. L'enfer, c'est ça.","Eu repito, tu repetes, e nada muda. O inferno é isto."]
+      ["Encore ?! [Fazes de propósito,] ou t'es vraiment con ?","Outra vez?! Fazes de propósito, ou és mesmo estúpido?"],
+      ["Même erreur, même accent de merde. [Ao menos és consistente,] crétin.","Mesmo erro, mesmo sotaque de merda. Ao menos és consistente, cretino.","s"],
+      ["[Filho da puta,] je répète, tu répètes, et rien ne change. [O inferno é isto.]","Filho da puta, eu repito, tu repetes, e nada muda. O inferno é isto."]
     ],
     skip:[
-      ["Tu abandonnes ? Quelle surprise.","Desistes? Que surpresa."],
-      ["Tu ne sais pas ? Moi, si. Écoute et apprends.","Não sabes? Eu sei. Ouve e aprende."],
-      ["Ah, la sortie de secours. Quel courage.","Ah, a saída de emergência. Que coragem."],
-      ["Pas de réponse, pas d'erreur. Bien joué. Mais non.","Sem resposta, sem erro. Bem jogado. Mas não."]
+      ["[Desistes?] Évidemment. [Os cobardes desistem sempre,] petite merde.","Desistes? Claro. Os cobardes desistem sempre, merdinhas."],
+      ["Tu ne sais pas ? [Eu sei.] Écoute et apprends, [burro.]","Não sabes? Eu sei. Ouve e aprende, burro."],
+      ["Ah, la sortie de secours. [Que coragem,] mon cul.","Ah, a saída de emergência. Que coragem, o caralho."],
+      ["Pas de réponse, pas d'erreur ? [Espertinho.] Mais non, [cabrão.]","Sem resposta, sem erro? Espertinho. Mas não, cabrão."]
     ],
     accents:[
-      ["Les mots sont bons. Les accents ? En rupture de stock ?","As palavras estão certas. Os acentos? Esgotados?"],
-      ["Sans accents, le français, c'est du marbre sans polissage.","Sem acentos, o francês é mármore sem polimento."],
-      ["« {got} » ? Ça s'écrit « {want} ». Avec l'accent, comme les gens civilisés.","«{got}»? Escreve-se «{want}». Com acento, como as pessoas civilizadas."]
+      ["Les mots sont bons. Les accents ? [Esgotados,] comme ton cerveau ?","As palavras estão certas. Os acentos? Esgotados, como o teu cérebro?"],
+      ["Sans accents, le français, c'est du marbre sans polissage : [uma merda baça.]","Sem acentos, o francês é mármore sem polimento: uma merda baça."],
+      ["« {got} » ? Ça s'écrit « {want} », [com acento,] comme les gens civilisés, [ó troglodita.]","«{got}»? Escreve-se «{want}», com acento, como as pessoas civilizadas, ó troglodita."]
     ]
   },
-  // a grudging "good" still points at the small slip
-  tail:{ miss:["Il manquait juste « {miss} ».","Só faltou «{miss}»."], sub:["Et c'est « {want} », pas « {got} ».","E é «{want}», não «{got}»."], acc:["Et « {want} » prend un accent.","E «{want}» leva acento."], extra:["Et « {extra} », personne ne te l'a demandé.","E «{extra}», ninguém to pediu."] },
+  // a grudging "good" still rubs in the small slip
+  tail:{
+    miss:["Mais il manquait « {miss} », [seu desleixado.]","Mas faltou «{miss}», seu desleixado."],
+    sub:["Et c'est « {want} », pas « {got} », [burro.]","E é «{want}», não «{got}», burro."],
+    acc:["Et « {want} » prend un accent, [ignorante.]","E «{want}» leva acento, ignorante."],
+    extra:["Et « {extra} », [ninguém to pediu,] bouffon.","E «{extra}», ninguém to pediu, palhaço."]
+  },
   model:"On dit : « {fr} »",
-  // the note is out of 20, as in French schools: [below, mention, fr, pt]
+  // the note is out of 20, as in French schools: [below, mention, line, translation]
   verdict:[
-    [5, "Catastrophique", "{n} sur 20. J'ai vu des pierres tombales plus bavardes.", "{n} em 20. Já vi lápides mais faladoras."],
-    [10, "Insuffisant", "{n} sur 20. Insuffisant. Mais tu as ouvert la bouche, c'est déjà ça.", "{n} em 20. Insuficiente. Mas abriste a boca, já é alguma coisa."],
-    [12, "Passable", "{n} sur 20. Passable. Comme un carrelage imitation marbre : de loin, ça passe.", "{n} em 20. Passável. Como cerâmico imitação mármore: ao longe, passa."],
-    [14, "Assez bien", "{n} sur 20. Assez bien. Ne t'emballe pas : « assez bien », ce n'est pas « bien ».", "{n} em 20. Razoável. Não te entusiasmes: «assez bien» não é «bien»."],
-    [16, "Bien", "{n} sur 20. Bien. Je ne le répéterai pas.", "{n} em 20. Bom. Não o vou repetir."],
-    [19, "Très bien", "{n} sur 20. Très bien. Je suis presque fière. Presque.", "{n} em 20. Muito bom. Estou quase orgulhosa. Quase."],
-    [99, "Très bien", "Dix-neuf. Le vingt, c'est pour Dieu, et le dix-neuf pour le professeur. Garde-le quand même.", "Dezanove. O vinte é para Deus, e o dezanove para o professor. Fica com ele na mesma."]
+    [5, "Catastrophique", "{n} sur 20. [Já vi lápides mais faladoras do que tu.] Rentre chez toi.", "{n} em 20. Já vi lápides mais faladoras do que tu. Vai para casa."],
+    [10, "Insuffisant", "{n} sur 20. Insuffisant. [Abriste a boca,] c'est déjà ça, [mesmo que só tenha saído merda.]", "{n} em 20. Insuficiente. Abriste a boca, já é alguma coisa, mesmo que só tenha saído merda."],
+    [12, "Passable", "{n} sur 20. Passable. [Como cerâmico imitação mármore:] de loin ça passe, [de perto é uma vergonha.]", "{n} em 20. Passável. Como cerâmico imitação mármore: ao longe passa, de perto é uma vergonha."],
+    [14, "Assez bien", "{n} sur 20. Assez bien. [Não te entusiasmes,] ça veut dire « presque de la merde ».", "{n} em 20. Razoável. Não te entusiasmes, quer dizer “quase uma merda”."],
+    [16, "Bien", "{n} sur 20. Bien. [Não te habitues,] je ne le dirai qu'une fois, [cabrão.]", "{n} em 20. Bom. Não te habitues, só o digo uma vez, cabrão."],
+    [19, "Très bien", "{n} sur 20. Très bien. [Estou quase orgulhosa.] Presque. [Não me abraces.]", "{n} em 20. Muito bom. Estou quase orgulhosa. Quase. Não me abraces."],
+    [99, "Très bien", "Dix-neuf. Le vingt, c'est pour Dieu, le dix-neuf pour le professeur. [Roubaste-me a nota, sacana.]", "Dezanove. O vinte é para Deus, o dezanove para o professor. Roubaste-me a nota, sacana."]
   ]
 };
 
@@ -2922,11 +2931,14 @@ function roDraw(set){
   return mix(pool.filter(it=>S.prog.srs[it.id]).concat(pool.filter(it=>!S.prog.srs[it.id])).slice(0, RO_N));
 }
 function roastSection(){
-  return `<section class="mod roast"><div class="mod-banner dark">${stoneSVG("nero", 760, 150, 9)}<div class="mb-txt"><span class="mb-num">Bonus · Madame Colette</span><span class="mb-fr" lang="fr">Sans pitié</span><span class="mb-pt">Ela pergunta, tu respondes ao microfone, e cada erro leva um insulto.</span></div></div>
+  return `<section class="mod roast"><div class="mod-banner dark">${stoneSVG("nero", 760, 150, 9)}<div class="mb-txt"><span class="mb-num">Bonus · Madame Colette · +18</span><span class="mb-fr" lang="fr">Sans pitié</span><span class="mb-pt">Ela pergunta, tu respondes ao microfone, e cada erro leva um insulto. Meio em francês, meio em português, sem filtro nenhum.</span></div></div>
     <div class="lrows">${roSets().map(x=>{ const b=roBest(x.id); return `<button class="lrow" data-act="roast" data-id="${x.id}"><span class="lnum">${x.num}</span><span class="ltxt"><b lang="fr">${h(x.fr)}</b><small>${h(x.pt)}</small></span>${b!=null?`<span class="lstat ${b>=14?"done":b>=10?"next":"redo"}">${b}/20</span>`:"<span></span>"}${ic("chevR","chev")}</button>`; }).join("")}</div></section>`;
 }
+// her lines mix both languages: [Portuguese] in brackets, the rest French
+function roMix(t){ return String(t).split(/\[([^\]]*)\]/).map((p,k)=> k%2 ? `<span class="ro-pt" lang="pt-PT">${h(p)}</span>` : h(frTypo(p))).join(""); }
+const roSpeech = t => String(t).replace(/[\[\]]/g,"");
 function coletteSays(line, cls){
-  return `<figure class="ro-say${cls?" "+cls:""}"><span class="ro-av" aria-hidden="true"><i>${stoneSVG("nero", 80, 80, 3)}</i><b>C</b></span><div class="ro-bubble"><blockquote lang="fr">${frHtml(line[0])}</blockquote><figcaption>${ptHtml(line[1])}</figcaption></div></figure>`;
+  return `<figure class="ro-say${cls?" "+cls:""}"><span class="ro-av" aria-hidden="true"><i>${stoneSVG("nero", 80, 80, 3)}</i><b>C</b></span><div class="ro-bubble"><blockquote lang="fr">${roMix(line[0])}</blockquote><figcaption>${ptHtml(line[1])}</figcaption></div></figure>`;
 }
 // one line of words, the wrong ones wrapped in a tag; French spacing before ? ! : ;
 function roLine(toks, tag){ return toks.map((x,k)=>(k ? (/^[?!:;»]/.test(x.w) ? " " : " ") : "") + (x.bad ? `<${tag}>${h(frTypo(x.w))}</${tag}>` : h(frTypo(x.w)))).join(""); }
@@ -2963,7 +2975,7 @@ const Roast = {
   },
   async say(text, g){
     const mark=on=>{ const el=$(".ro-say"); if(el) el.classList.toggle("talk", on); };
-    mark(true); const r=await sayFr(text, "A", false, ()=>g===this.gen); if(g===this.gen) mark(false);
+    mark(true); const r=await sayFr(roSpeech(text), "A", false, ()=>g===this.gen); if(g===this.gen) mark(false);   // the Portuguese bits too, with her French accent
     return r;
   },
   async intro(){
@@ -3039,7 +3051,7 @@ const Roast = {
     this.stop(); this.flushTime(); Wake.drop("roast"); this.stage="done";
     const { raw, note }=roastNote(this.att.map(a=>a.length ? a[0].s : 0));
     const atFirst=this.att.filter(a=>a.length && a[0].s>=0.8).length;
-    const insults=this.att.reduce((n,a)=>n+a.filter(x=>!["perfect","good","better"].includes(x.kind)).length, 0);
+    const insults=this.att.reduce((n,a)=>n+a.length, 0);   // even her compliments are insults
     const best=roBest(this.set);
     addHistory({ d:Date.now(), k:"roast", set:this.set, n:this.items.length, note, sec:Math.round(this.timeNow()/1000) }); saveProg();
     const b=COLETTE.verdict.find(x=>raw<x[0]) || COLETTE.verdict[COLETTE.verdict.length-1];
